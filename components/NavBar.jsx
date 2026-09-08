@@ -1,12 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import Logo from "./Logo";
 import UserButton from "./UserButton";
 import { authClient } from "@/lib/auth-client";
-import { ORG_NAME } from "@/constants";
 
 const NavBar = () => {
   const pathname = usePathname();
@@ -14,15 +13,11 @@ const NavBar = () => {
   // Use Better Auth's useSession hook directly
   const { data: session, isPending } = authClient.useSession();
 
-  // Track header elevation as the only value that genuinely needs a listener
   const [scrollElevation, setScrollElevation] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Update header elevation based on scroll offset
   useEffect(() => {
-    const handleWindowScroll = () => {
-      setScrollElevation(window.scrollY);
-    };
+    const handleWindowScroll = () => setScrollElevation(window.scrollY);
     window.addEventListener("scroll", handleWindowScroll);
     return () => window.removeEventListener("scroll", handleWindowScroll);
   }, []);
@@ -32,14 +27,15 @@ const NavBar = () => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Derive everything else from session during render
-  const userSessionEmail = session?.user?.email || "";
-  const isAuthenticated = Boolean(userSessionEmail);
+  // Derive everything from session during render
+  const isAuthenticated = Boolean(session?.user?.email);
   const hasAdminPermissions = session?.user?.role === "admin";
   const navigationRouteList = [
+    { label: "Overview", href: "/" },
     { label: "Departments", href: "/departments" },
+    { label: "Development", href: "/development" },
     ...(isAuthenticated && hasAdminPermissions
-      ? [{ label: "Admin Panel", href: "/admin" }]
+      ? [{ label: "Admin Review", href: "/admin" }]
       : []),
   ];
 
@@ -47,12 +43,68 @@ const NavBar = () => {
 
   return (
     <header
-      className={`sticky top-0 z-40 border-b transition-colors ${
+      className={`sticky top-0 z-50 w-full border-b transition-colors ${
         isScrolled
-          ? "border-border bg-background/80 backdrop-blur-md"
-          : "border-transparent bg-background/40 backdrop-blur-sm"
+          ? "border-white/5 bg-background/90 backdrop-blur-xl"
+          : "border-transparent bg-background/60 backdrop-blur-md"
       }`}
     >
+      <div className="container-page flex h-20 items-center justify-between gap-6">
+        <Link href="/" className="shrink-0 transition-transform active:scale-95">
+          <Logo className="h-9 w-auto" />
+        </Link>
+
+        {/* Desktop pill nav */}
+        <nav className="nav-pill-group hidden lg:flex">
+          {navigationRouteList.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                className={`nav-pill ${isActive ? "nav-pill-active" : ""}`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="flex shrink-0 items-center gap-4">
+          <div className="badge hidden sm:inline-flex">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: "var(--g-green)" }}
+            />
+            <span className="tracking-wide">Recruitment Open</span>
+          </div>
+
+          {isPending ? (
+            <span className="h-9 w-24 animate-pulse rounded-full bg-white/5" />
+          ) : !isAuthenticated ? (
+            <Link href="/auth/signin" className="btn-primary hidden py-2.5 sm:inline-flex">
+              Sign In
+            </Link>
+          ) : (
+            <div className="hidden sm:block">
+              <UserButton user={session?.user} />
+            </div>
+          )}
+
+          <button
+            type="button"
+            className="btn-ghost h-10 w-10 p-0 lg:hidden"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            onClick={() => setIsMobileMenuOpen((open) => !open)}
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Signature 4-colour Google accent line */}
       <div className="g-rule">
         <span />
         <span />
@@ -60,75 +112,20 @@ const NavBar = () => {
         <span />
       </div>
 
-      <nav className="container-page flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/assets/gdg-logo-loader.svg"
-            alt=""
-            width={32}
-            height={32}
-            className="rounded-xl"
-          />
-          <span className="text-base font-semibold text-foreground">{ORG_NAME}</span>
-        </Link>
-
-        {/* Desktop nav */}
-        <div className="hidden items-center gap-6 md:flex">
-          {navigationRouteList.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative py-2 text-sm font-medium transition-colors ${
-                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {item.label}
-                {isActive && (
-                  <span className="absolute -bottom-[1px] left-0 h-0.5 w-full rounded-full bg-primary" />
-                )}
-              </Link>
-            );
-          })}
-
-          {isPending ? (
-            <span className="h-9 w-20 animate-pulse rounded-md bg-muted" />
-          ) : !isAuthenticated ? (
-            <Link href="/auth/signin" className="btn-primary">
-              Sign In
-            </Link>
-          ) : (
-            <UserButton user={session?.user} />
-          )}
-        </div>
-
-        {/* Mobile menu toggle */}
-        <button
-          type="button"
-          className="btn-ghost h-9 w-9 p-0 md:hidden"
-          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMobileMenuOpen}
-          onClick={() => setIsMobileMenuOpen((open) => !open)}
-        >
-          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </nav>
-
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="border-t border-border bg-background/95 backdrop-blur-md md:hidden">
-          <div className="container-page flex flex-col gap-1 py-3">
+        <div className="border-b border-white/5 bg-background/95 backdrop-blur-xl lg:hidden">
+          <div className="container-page flex flex-col gap-1 py-4">
             {navigationRouteList.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`rounded-md px-3 py-2 text-sm font-medium ${
+                  className={`rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      ? "bg-accent text-foreground"
+                      : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                   }`}
                 >
                   {item.label}
@@ -136,9 +133,9 @@ const NavBar = () => {
               );
             })}
 
-            <div className="mt-2 border-t border-border pt-3">
+            <div className="mt-3 border-t border-white/5 pt-4">
               {isPending ? (
-                <span className="block h-9 w-full animate-pulse rounded-md bg-muted" />
+                <span className="block h-10 w-full animate-pulse rounded-full bg-white/5" />
               ) : !isAuthenticated ? (
                 <Link href="/auth/signin" className="btn-primary w-full">
                   Sign In

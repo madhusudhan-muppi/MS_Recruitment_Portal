@@ -1,17 +1,23 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ORG_NAME } from "@/constants";
+import Logo from "./Logo";
+import { ORG_LONG_NAME, ORG_DISCLAIMER, DEVELOPMENT_DEPARTMENT_NAMES } from "@/constants";
 
-const footerLinks = [
-  { name: "Home", path: "/" },
-  { name: "Departments", path: "/departments" },
+const recruitmentLinks = [
+  { name: "All Departments", path: "/departments" },
+  { name: "Development Tracks", path: "/development" },
+  { name: "Apply Now", path: "/departments" },
+];
+
+const communityLinks = [
+  { name: "Overview", path: "/" },
+  { name: "Sign In", path: "/auth/signin" },
 ];
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-background">
+    <footer className="w-full border-t border-white/5" style={{ backgroundColor: "var(--surface-base)" }}>
       <div className="g-rule">
         <span />
         <span />
@@ -19,33 +25,55 @@ const Footer = () => {
         <span />
       </div>
 
-      <div className="container-page flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/assets/gdg-logo-loader.svg"
-            alt=""
-            width={28}
-            height={28}
-            className="rounded-lg"
-          />
-          <span className="text-sm font-semibold text-foreground">{ORG_NAME}</span>
-        </Link>
+      <div className="container-page grid grid-cols-1 gap-12 py-16 md:grid-cols-2 lg:grid-cols-4 sm:gap-16">
+        <div className="flex flex-col gap-5 lg:col-span-2">
+          <Link href="/" className="self-start">
+            <Logo className="h-8 w-auto" />
+          </Link>
+          <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+            {ORG_DISCLAIMER}
+          </p>
+          <span className="mt-2 text-xs text-muted-foreground/60">
+            &copy; {currentYear} {ORG_LONG_NAME}. All rights reserved.
+          </span>
+        </div>
 
-        <p className="text-sm text-muted-foreground">
-          &copy; {currentYear} {ORG_NAME} &middot; Recruitment Portal
-        </p>
+        <div className="flex flex-col gap-4">
+          <h4 className="font-display text-xs font-bold uppercase tracking-widest text-foreground">
+            Recruitment
+          </h4>
+          <ul className="flex flex-col gap-3 text-sm text-muted-foreground">
+            {recruitmentLinks.map((link) => (
+              <li key={link.name}>
+                <Link href={link.path} className="transition-colors hover:text-foreground">
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <nav className="flex items-center gap-4 text-sm">
-          {footerLinks.map((link) => (
-            <Link
-              key={link.path}
-              href={link.path}
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {link.name}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex flex-col gap-4">
+          <h4 className="font-display text-xs font-bold uppercase tracking-widest text-foreground">
+            Tracks
+          </h4>
+          <ul className="flex flex-col gap-3 text-sm text-muted-foreground">
+            {DEVELOPMENT_DEPARTMENT_NAMES.map((name) => (
+              <li key={name}>
+                <Link href="/development" className="transition-colors hover:text-foreground">
+                  {name}
+                </Link>
+              </li>
+            ))}
+            {communityLinks.map((link) => (
+              <li key={link.name}>
+                <Link href={link.path} className="transition-colors hover:text-foreground">
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </footer>
   );

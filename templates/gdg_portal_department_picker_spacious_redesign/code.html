@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "inverse-primary": "#005ac1",
+            "secondary-container": "#30a550",
+            "on-secondary": "#003914",
+            "tertiary-fixed": "#ffdea0",
+            "tertiary-fixed-dim": "#fbbc06",
+            "error-container": "#93000a",
+            "on-error-container": "#ffdad6",
+            "on-secondary-fixed": "#002108",
+            "on-secondary-container": "#003210",
+            "primary-container": "#4d8efe",
+            "on-tertiary-fixed-variant": "#5c4300",
+            "on-surface-variant": "#c2c6d5",
+            "tertiary-container": "#b88900",
+            "surface-tint": "#adc6ff",
+            "surface-variant": "#34343a",
+            "secondary-fixed": "#89fa9b",
+            "surface-container-high": "#292a2f",
+            "on-tertiary-container": "#372700",
+            "surface-bright": "#38393f",
+            "inverse-on-surface": "#2f3036",
+            "on-error": "#690005",
+            "surface-container-highest": "#34343a",
+            "on-secondary-fixed-variant": "#005320",
+            "on-surface": "#e3e1e9",
+            "outline": "#8c909f",
+            "primary-fixed": "#d8e2ff",
+            "surface-container-lowest": "#0d0e13",
+            "tertiary": "#fbbc06",
+            "background": "#121318",
+            "surface": "#121318",
+            "error": "#ffb4ab",
+            "on-primary-fixed-variant": "#004494",
+            "on-tertiary": "#402d00",
+            "surface-container-low": "#1a1b21",
+            "surface-container": "#1e1f25",
+            "secondary": "#6ddd81",
+            "inverse-surface": "#e3e1e9",
+            "primary-fixed-dim": "#adc6ff",
+            "on-primary": "#002e69",
+            "on-primary-fixed": "#001a41",
+            "primary": "#adc6ff",
+            "on-background": "#e3e1e9",
+            "on-primary-container": "#00285c",
+            "secondary-fixed-dim": "#6ddd81",
+            "outline-variant": "#424753",
+            "on-tertiary-fixed": "#261a00",
+            "surface-dim": "#121318"
+          },
+          fontFamily: {
+            "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "title-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "body-lg": ["Inter", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "label-lg": ["Inter", "sans-serif"],
+            "label-md": ["Inter", "sans-serif"],
+            "label-sm": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-white pb-32">
+<!-- Fixed Clean Header -->
+<header class="fixed top-0 w-full z-50 bg-[#121318]/90 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="h-20 w-full px-6 lg:px-12 max-w-7xl mx-auto flex items-center justify-between gap-8">
+<!-- Logo -->
+<a class="flex items-center shrink-0 hover:opacity-95 transition-opacity" href="#">
+<img alt="GDG on Campus VIT Chennai" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V6WmLHn-PUYIWlcX3lYTQKVlRxluOnQciwnfqIEN32TKPwxMNJZlfP3goHFA-Q6nlt3iYZqvc4KPnLjLbJ5R_cBCoT02PvOqqgaZLayLjmRRwFcQATnKXUV8LG4uRATbOh1X8iD_m-APV5DGfuX68-JhY1KQQs4P165PJqSxxXJl6cZm-LN7AI-VlZxbBKiWjW0rbWcpX3pp9FukMgxV4gFrQLGzLCyjGHwWsDkVc_tNF_v9zF6146HQ"/>
+</a>
+<!-- Desktop Nav -->
+<nav class="hidden lg:flex items-center gap-2 bg-surface-container-low/70 px-3 py-1.5 rounded-full border border-outline-variant/30">
+<a class="px-4 py-2 rounded-full font-label-md text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="overview" href="#">Overview</a>
+<a aria-current="page" class="px-4 py-2 rounded-full font-label-md text-sm bg-primary/15 text-primary font-semibold border border-primary/25" data-path="departments" href="#">Departments</a>
+<a class="px-4 py-2 rounded-full font-label-md text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="apply-now" href="#">Apply Now</a>
+<a class="px-4 py-2 rounded-full font-label-md text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="my-application" href="#">My Application</a>
+<a class="px-4 py-2 rounded-full font-label-md text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="admin-review" href="#">Admin Review</a>
+</nav>
+<!-- Right Meta & Avatar -->
+<div class="flex items-center gap-4 shrink-0">
+<div class="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-high/80 border border-outline-variant/40">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-xs text-on-surface font-medium">Fall '25 Cycle</span>
+</div>
+<div class="flex items-center gap-3">
+<img alt="Applicant Profile" class="w-10 h-10 rounded-full ring-2 ring-primary/30 object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida/AEtjO1VF31OqXRF-Tr7g2HEdQuN7L8r8sOI8ce5mC9zSUKtR4cDRTPZjITAQunFSUgp_VqBmDIaOiLo-UThyIrgcr0jF2MSnBbUIS8_rDdDJv8BeU4mKhCPxG4YsSB8potrgZI732z8PUUS8CGcq7lt-cy-CWBU5nLDA2Y-ufglkMw8k_GP7qAKI2MtPybCeqKZ2lWumMbD2W9fq1uaBwGIChrmIzDOjBxsosaGOMmI87nz1rg_ta_tlj8Tmgqg"/>
+<a class="hidden md:inline-flex text-xs font-semibold text-primary hover:text-primary-fixed transition-colors" data-path="login" href="#">Sign In</a>
+</div>
+</div>
+</div>
+<!-- 4-Color Google Accent Line -->
+<div class="w-full h-[3px] flex opacity-90">
+<span class="h-full w-1/4 bg-[#4285F4]"></span>
+<span class="h-full w-1/4 bg-[#EA4335]"></span>
+<span class="h-full w-1/4 bg-[#FBBC05]"></span>
+<span class="h-full w-1/4 bg-[#34A853]"></span>
+</div>
+</header>
+<!-- Main Content Body -->
+<main class="w-full pt-28 max-w-7xl mx-auto px-6 lg:px-12 flex-1 flex flex-col gap-10">
+<!-- Page Header & Step Tracker -->
+<section class="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 pt-6 pb-2 border-b border-outline-variant/20">
+<div class="flex flex-col gap-3 max-w-3xl">
+<!-- Step Indicator Pill -->
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-label-sm text-xs font-semibold uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">route</span>
+            Step 1 of 3: Choose Your Domain
+          </span>
+<span class="text-outline/60 text-xs">•</span>
+<span class="text-on-surface-variant font-label-sm text-xs tracking-wide">Recruitment Cycle 2025–26</span>
+</div>
+<h1 class="font-display-lg text-3xl sm:text-4xl lg:text-5xl font-extrabold text-on-surface tracking-tight leading-tight">
+          Select Your Preferred Tracks
+        </h1>
+<p class="font-body-lg text-base md:text-lg text-on-surface-variant leading-relaxed">
+          You may choose up to <span class="text-on-surface font-semibold">two technical or creative domains</span>. Your primary track receives priority review; your secondary track ensures consideration across parallel interview tracks.
+        </p>
+</div>
+<!-- Live Selection Pill -->
+<div class="flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-surface-container border border-outline-variant/30 shadow-sm shrink-0">
+<div class="w-12 h-12 rounded-xl bg-secondary/15 border border-secondary/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-widest">Tracks Selected</span>
+<div class="flex items-baseline gap-1.5">
+<span class="text-2xl font-bold text-secondary" id="selection-counter">2</span>
+<span class="text-sm font-medium text-outline">/ 2 Max</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Search & Category Filters -->
+<section class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-5 bg-surface-container-low/80 p-3 rounded-2xl border border-outline-variant/30 backdrop-blur-md">
+<!-- Category Tabs -->
+<div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-1" id="filter-chip-group">
+<button class="filter-btn px-5 py-2.5 rounded-xl font-label-md text-sm font-medium bg-primary text-on-primary shadow-sm transition-all whitespace-nowrap" data-filter="all" type="button">
+          All Tracks (6)
+        </button>
+<button class="filter-btn px-5 py-2.5 rounded-xl font-label-md text-sm font-medium bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap" data-filter="engineering" type="button">
+          Engineering &amp; Core
+        </button>
+<button class="filter-btn px-5 py-2.5 rounded-xl font-label-md text-sm font-medium bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap" data-filter="ai" type="button">
+          AI &amp; Machine Learning
+        </button>
+<button class="filter-btn px-5 py-2.5 rounded-xl font-label-md text-sm font-medium bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap" data-filter="design" type="button">
+          Design &amp; Creative
+        </button>
+<button class="filter-btn px-5 py-2.5 rounded-xl font-label-md text-sm font-medium bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap" data-filter="systems" type="button">
+          Security &amp; Cloud
+        </button>
+</div>
+<!-- Search Input -->
+<div class="flex items-center gap-3 bg-surface-container-highest/80 px-4 h-13 py-2.5 rounded-xl border border-outline-variant/40 min-w-[280px] lg:w-80 transition-all focus-within:border-primary/60 focus-within:ring-1 focus-within:ring-primary/40">
+<span class="material-symbols-outlined text-outline text-xl">search</span>
+<input class="bg-transparent border-none text-on-surface placeholder:text-outline/70 font-body-md text-sm focus:outline-none w-full" id="track-search-input" placeholder="Search track or tech stack..." type="text"/>
+</div>
+</section>
+<!-- Department Cards Grid (Generous 3-Column, gap-8) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="tracks-grid">
+<!-- Card 1: Web Development (Selected Primary) -->
+<div class="dept-card group relative flex flex-col justify-between p-8 rounded-2xl bg-surface-container border-2 border-primary/80 shadow-lg shadow-primary/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl" data-domain="engineering" data-id="web">
+<!-- Top Accent Subtle Glow Indicator -->
+<div class="absolute -top-0.5 inset-x-8 h-1 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400"></div>
+<div class="flex flex-col gap-6">
+<div class="flex items-start justify-between gap-4">
+<div class="w-14 h-14 rounded-2xl bg-[#4285F4]/15 text-[#4285F4] flex items-center justify-center border border-[#4285F4]/30 shadow-inner">
+<span class="material-symbols-outlined text-3xl">terminal</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 text-primary font-label-sm text-xs font-semibold border border-primary/30">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+              Primary Track
+            </span>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold text-outline tracking-wider uppercase">Engineering Track</span>
+<h2 class="text-2xl font-bold font-headline-md text-on-surface group-hover:text-primary transition-colors">
+              Web Development
+            </h2>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              Build high-performance web platforms, community portals, and campus-wide software using modern full-stack architectures.
+            </p>
+</div>
+<!-- Tags -->
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">React 19</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Next.js</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Go / Node</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">PostgreSQL</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 mt-6 border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-secondary text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>4 Open Roles</span>
+</div>
+<button class="select-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-xs font-bold shadow transition-all hover:bg-primary/90" type="button">
+<span>Selected (Primary Track)</span>
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</button>
+</div>
+</div>
+<!-- Card 2: AI & Machine Learning (Selected Secondary) -->
+<div class="dept-card group relative flex flex-col justify-between p-8 rounded-2xl bg-surface-container border-2 border-secondary/80 shadow-lg shadow-secondary/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl" data-domain="ai" data-id="ml">
+<!-- Top Accent Subtle Glow Indicator -->
+<div class="absolute -top-0.5 inset-x-8 h-1 rounded-full bg-gradient-to-r from-emerald-400 via-green-500 to-teal-400"></div>
+<div class="flex flex-col gap-6">
+<div class="flex items-start justify-between gap-4">
+<div class="w-14 h-14 rounded-2xl bg-secondary/15 text-secondary flex items-center justify-center border border-secondary/30 shadow-inner">
+<span class="material-symbols-outlined text-3xl">neurology</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/20 text-secondary font-label-sm text-xs font-semibold border border-secondary/30">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">check</span>
+              Secondary Track
+            </span>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold text-outline tracking-wider uppercase">Data &amp; Intelligence</span>
+<h2 class="text-2xl font-bold font-headline-md text-on-surface group-hover:text-secondary transition-colors">
+              AI &amp; Machine Learning
+            </h2>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              Harness Gemini APIs, fine-tune transformer models, implement multimodal RAG, and ship generative features into production apps.
+            </p>
+</div>
+<!-- Tags -->
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Gemini 1.5</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">PyTorch</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">RAG Agents</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Vector DB</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 mt-6 border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-secondary text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>3 Open Roles</span>
+</div>
+<button class="select-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-secondary text-on-secondary font-label-md text-xs font-bold shadow transition-all hover:bg-secondary/90" type="button">
+<span>Selected (Secondary Track)</span>
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Cloud & DevOps -->
+<div class="dept-card group relative flex flex-col justify-between p-8 rounded-2xl bg-surface-container border border-outline-variant/40 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-surface-container-high cursor-pointer" data-domain="systems" data-id="cloud">
+<div class="flex flex-col gap-6">
+<div class="flex items-start justify-between gap-4">
+<div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-3xl">cloud_sync</span>
+</div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">
+              Available
+            </span>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold text-outline tracking-wider uppercase">Infrastructure Track</span>
+<h2 class="text-2xl font-bold font-headline-md text-on-surface group-hover:text-primary transition-colors">
+              Cloud &amp; DevOps
+            </h2>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              Architect resilient cloud workloads with GCP, orchestrate Kubernetes clusters, and automate automated zero-downtime CI/CD pipelines.
+            </p>
+</div>
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Google Cloud</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Kubernetes</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Docker</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Terraform</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 mt-6 border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-secondary text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>2 Open Roles</span>
+</div>
+<button class="select-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-highest text-on-surface hover:bg-primary hover:text-on-primary font-label-md text-xs font-semibold transition-colors border border-outline-variant/40" type="button">
+<span>Select Track</span>
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+<!-- Card 4: UI/UX Design -->
+<div class="dept-card group relative flex flex-col justify-between p-8 rounded-2xl bg-surface-container border border-outline-variant/40 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-surface-container-high cursor-pointer" data-domain="design" data-id="design">
+<div class="flex flex-col gap-6">
+<div class="flex items-start justify-between gap-4">
+<div class="w-14 h-14 rounded-2xl bg-[#EA4335]/15 text-[#EA4335] flex items-center justify-center border border-[#EA4335]/30">
+<span class="material-symbols-outlined text-3xl">palette</span>
+</div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">
+              Available
+            </span>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold text-outline tracking-wider uppercase">Creative Track</span>
+<h2 class="text-2xl font-bold font-headline-md text-on-surface group-hover:text-primary transition-colors">
+              UI/UX Design
+            </h2>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              Design cohesive design systems, intuitive wireframes, tactile micro-interactions, and visual brands across all digital touchpoints.
+            </p>
+</div>
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Figma M3</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Design Systems</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Prototyping</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">UX Research</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 mt-6 border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-secondary text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>3 Open Roles</span>
+</div>
+<button class="select-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-highest text-on-surface hover:bg-primary hover:text-on-primary font-label-md text-xs font-semibold transition-colors border border-outline-variant/40" type="button">
+<span>Select Track</span>
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+<!-- Card 5: Mobile Development -->
+<div class="dept-card group relative flex flex-col justify-between p-8 rounded-2xl bg-surface-container border border-outline-variant/40 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-surface-container-high cursor-pointer" data-domain="engineering" data-id="mobile">
+<div class="flex flex-col gap-6">
+<div class="flex items-start justify-between gap-4">
+<div class="w-14 h-14 rounded-2xl bg-[#FBBC05]/15 text-[#FBBC05] flex items-center justify-center border border-[#FBBC05]/30">
+<span class="material-symbols-outlined text-3xl">stay_current_portrait</span>
+</div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">
+              Available
+            </span>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold text-outline tracking-wider uppercase">Native &amp; Hybrid Track</span>
+<h2 class="text-2xl font-bold font-headline-md text-on-surface group-hover:text-primary transition-colors">
+              Mobile Development
+            </h2>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              Craft responsive, native Android and multiplatform mobile applications utilizing Kotlin Jetpack Compose and Flutter frameworks.
+            </p>
+</div>
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Kotlin Compose</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Flutter 3</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Firebase SDK</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Coroutines</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 mt-6 border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-secondary text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>2 Open Roles</span>
+</div>
+<button class="select-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-highest text-on-surface hover:bg-primary hover:text-on-primary font-label-md text-xs font-semibold transition-colors border border-outline-variant/40" type="button">
+<span>Select Track</span>
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+<!-- Card 6: Cybersecurity & Systems -->
+<div class="dept-card group relative flex flex-col justify-between p-8 rounded-2xl bg-surface-container border border-outline-variant/40 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-surface-container-high cursor-pointer" data-domain="systems" data-id="security">
+<div class="flex flex-col gap-6">
+<div class="flex items-start justify-between gap-4">
+<div class="w-14 h-14 rounded-2xl bg-[#0F9D58]/15 text-[#0F9D58] flex items-center justify-center border border-[#0F9D58]/30">
+<span class="material-symbols-outlined text-3xl">verified_user</span>
+</div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">
+              Available
+            </span>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-semibold text-outline tracking-wider uppercase">Systems &amp; Security Track</span>
+<h2 class="text-2xl font-bold font-headline-md text-on-surface group-hover:text-primary transition-colors">
+              Cybersecurity &amp; Systems
+            </h2>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              Explore defensive security, zero-trust cloud setups, API audit workflows, and kernel-level network telemetry safeguards.
+            </p>
+</div>
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Network Audit</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Zero Trust</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Linux Kernel</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant font-label-sm text-xs font-medium border border-outline-variant/30">Cryptography</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 mt-6 border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-secondary text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>2 Open Roles</span>
+</div>
+<button class="select-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-highest text-on-surface hover:bg-primary hover:text-on-primary font-label-md text-xs font-semibold transition-colors border border-outline-variant/40" type="button">
+<span>Select Track</span>
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Value Propositions Section -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 rounded-3xl bg-surface-container-low border border-outline-variant/20 shadow-sm mt-4">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
+<span class="material-symbols-outlined text-2xl">hub</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<h3 class="font-title-lg text-lg font-bold text-on-surface">Cross-Domain Freedom</h3>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+            Chosen for both Web and AI? Our agile squads collaborate actively, uniting design, model pipelines, and cloud APIs.
+          </p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0 border border-secondary/20">
+<span class="material-symbols-outlined text-2xl">school</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<h3 class="font-title-lg text-lg font-bold text-on-surface">Direct Google Mentorship</h3>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+            Gain access to senior Google Developer Experts (GDEs), exclusive workshop streams, and Google Cloud platform credits.
+          </p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-[#FBBC05]/10 text-[#FBBC05] flex items-center justify-center shrink-0 border border-[#FBBC05]/20">
+<span class="material-symbols-outlined text-2xl">alt_route</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<h3 class="font-title-lg text-lg font-bold text-on-surface">Dual Interview Pipeline</h3>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+            If your primary track is exceptionally competitive, your profile is seamlessly transferred to your secondary panel.
+          </p>
+</div>
+</div>
+</section>
+</main>
+<!-- Sticky Bottom Summary Floating Glassmorphism Bar -->
+<aside class="fixed bottom-6 inset-x-4 max-w-6xl mx-auto z-40">
+<div class="relative overflow-hidden rounded-3xl bg-surface-container-high/90 backdrop-blur-xl border border-outline-variant/40 shadow-2xl py-4 px-6 md:px-8 flex flex-col md:flex-row items-center justify-between gap-5">
+<!-- Gradient Border Line -->
+<div class="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#4285F4] via-[#EA4335] via-[#FBBC05] to-[#34A853]"></div>
+<!-- Left Info & Badges -->
+<div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+<div class="flex items-center gap-3 shrink-0">
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-on-primary font-bold text-xs">
+            1
+          </div>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold tracking-widest text-outline">Stage 1 of 3</span>
+<span class="text-xs font-semibold text-on-surface">Selected Tracks</span>
+</div>
+</div>
+<div class="hidden sm:block h-6 w-px bg-outline-variant/50"></div>
+<!-- Chips of selected tracks -->
+<div class="flex flex-wrap items-center gap-2.5" id="summary-badge-group">
+<div class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-highest border border-primary/40 text-on-surface text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-[#4285F4]"></span>
+<span>Primary: <strong>Web Development</strong></span>
+<button class="ml-1 text-outline hover:text-on-surface transition-colors" title="Remove track" type="button">
+<span class="material-symbols-outlined text-xs">close</span>
+</button>
+</div>
+<div class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-highest border border-secondary/40 text-on-surface text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-[#34A853]"></span>
+<span>Secondary: <strong>AI &amp; ML</strong></span>
+<button class="ml-1 text-outline hover:text-on-surface transition-colors" title="Remove track" type="button">
+<span class="material-symbols-outlined text-xs">close</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Action CTAs -->
+<div class="flex items-center gap-3 w-full md:w-auto justify-end shrink-0">
+<button class="px-4 py-2.5 rounded-xl font-label-md text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-colors" id="reset-selection-btn" type="button">
+          Reset
+        </button>
+<a class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-xs font-bold hover:bg-primary/90 transition-all shadow-md shadow-primary/20" data-path="apply-now" href="#">
+<span>Proceed to Application Form</span>
+<span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Clean Footer -->
+<footer class="w-full bg-surface-container-low border-t border-outline-variant/30 mt-20">
+<div class="w-full h-[3px] flex opacity-80">
+<span class="h-full w-1/4 bg-[#4285F4]"></span>
+<span class="h-full w-1/4 bg-[#EA4335]"></span>
+<span class="h-full w-1/4 bg-[#FBBC05]"></span>
+<span class="h-full w-1/4 bg-[#34A853]"></span>
+</div>
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
+<div class="flex flex-col gap-3 max-w-xl">
+<img alt="GDG on Campus VIT Chennai" class="h-8 w-auto object-contain self-start opacity-90" src="https://lh3.googleusercontent.com/aida/AEtjO1V6WmLHn-PUYIWlcX3lYTQKVlRxluOnQciwnfqIEN32TKPwxMNJZlfP3goHFA-Q6nlt3iYZqvc4KPnLjLbJ5R_cBCoT02PvOqqgaZLayLjmRRwFcQATnKXUV8LG4uRATbOh1X8iD_m-APV5DGfuX68-JhY1KQQs4P165PJqSxxXJl6cZm-LN7AI-VlZxbBKiWjW0rbWcpX3pp9FukMgxV4gFrQLGzLCyjGHwWsDkVc_tNF_v9zF6146HQ"/>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+          Google Developer Groups on Campus is an independent, student-led community backed by Google Developers. Student organizers operate voluntarily, and chapter activities are not formally operated by Google LLC.
+        </p>
+<span class="text-xs text-outline pt-1">© 2025 GDG on Campus VIT Chennai. All rights reserved.</span>
+</div>
+<div class="flex flex-col sm:flex-row gap-8 sm:gap-14">
+<div class="flex flex-col gap-2">
+<span class="text-xs font-bold text-on-surface uppercase tracking-wider">Recruitment</span>
+<a class="text-xs text-on-surface-variant hover:text-primary transition-colors" data-path="departments" href="#">Technical &amp; AI Core</a>
+<a class="text-xs text-on-surface-variant hover:text-primary transition-colors" data-path="departments" href="#">Design &amp; Creative</a>
+<a class="text-xs text-on-surface-variant hover:text-primary transition-colors" data-path="departments" href="#">Security &amp; Cloud</a>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-bold text-on-surface uppercase tracking-wider">Community</span>
+<a class="text-xs text-on-surface-variant hover:text-primary transition-colors" href="#">LinkedIn Community</a>
+<a class="text-xs text-on-surface-variant hover:text-primary transition-colors" href="#">GitHub Organization</a>
+<a class="text-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Instagram Chapter</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+    (function() {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.dept-card');
+      const searchInput = document.getElementById('track-search-input');
+
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterButtons.forEach(b => {
+            b.className = 'filter-btn px-5 py-2.5 rounded-xl font-label-md text-sm font-medium bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap';
+          });
+          btn.className = 'filter-btn px-5 py-2.5 rounded-xl font-label-md text-sm font-medium bg-primary text-on-primary shadow-sm transition-all whitespace-nowrap';
+
+          const filter = btn.getAttribute('data-filter');
+          cards.forEach(card => {
+            const domain = card.getAttribute('data-domain');
+            if (filter === 'all' || domain === filter) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            if (text.includes(query)) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      }
+
+      const resetBtn = document.getElementById('reset-selection-btn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          const counter = document.getElementById('selection-counter');
+          if (counter) counter.innerText = '0';
+          const summaryGroup = document.getElementById('summary-badge-group');
+          if (summaryGroup) {
+            summaryGroup.innerHTML = '<span class="text-on-surface-variant text-xs italic">No tracks selected yet. Select 1 or 2 tracks above.</span>';
+          }
+        });
+      }
+    })();
+  </script>
+</body></html>

@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowRight, Check, Loader2, ShieldCheck } from "lucide-react";
 import { QuestionnaireData, ORG_NAME } from "@/constants";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
@@ -288,13 +288,40 @@ const FormComp = ({ dept1, dept2 }) => {
     }
   };
 
+
+  const completedCount = departmentNames.filter((name) =>
+    submittedDepartments.includes(name)
+  ).length;
+
   return (
     <main className="container-page py-10">
+      {/* Page header */}
+      <div className="flex flex-col gap-3 border-b border-white/10 pb-8">
+        <span className="eyebrow flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--g-blue)" }} />
+          {ORG_NAME} Recruitment {new Date().getFullYear()}
+        </span>
+        <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+          Recruitment Candidate Assessment
+        </h1>
+        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          Take your time. Responses are saved to your draft automatically as you type.
+        </p>
+      </div>
+
       {errorMessage && !isSubmitting && (
-        <div className="surface mb-6 flex items-start gap-3 border-destructive/40 bg-destructive/10 p-4">
-          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+        <div
+          className="mt-8 flex items-start gap-3 rounded-2xl border p-4"
+          style={{
+            backgroundColor: "rgb(234 67 53 / 0.1)",
+            borderColor: "rgb(234 67 53 / 0.3)",
+          }}
+        >
+          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" style={{ color: "var(--g-red)" }} />
           <div className="flex-1">
-            <p className="text-sm font-medium text-destructive">{errorMessage}</p>
+            <p className="text-sm font-medium" style={{ color: "var(--g-red)" }}>
+              {errorMessage}
+            </p>
             <button
               type="button"
               onClick={() => router.push("/departments")}
@@ -306,176 +333,355 @@ const FormComp = ({ dept1, dept2 }) => {
         </div>
       )}
 
-      <h1 className="text-3xl font-bold text-foreground">Application Form</h1>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {departmentObjects.map((department, index) => {
-          const name = typeof department === "string" ? department : department.name;
-          const tone = typeof department === "string" ? undefined : department.tone;
-          return (
-            <span
-              key={name || index}
-              className="badge"
-              style={tone ? { backgroundColor: `${tone}22`, color: tone, borderColor: `${tone}55` } : undefined}
-            >
-              {name}
-            </span>
-          );
-        })}
-      </div>
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="mt-8 space-y-8">
-          <section className="surface p-6">
-            <h2 className="text-lg font-semibold text-foreground">About You</h2>
-
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="Name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="label">Full Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} className="field" placeholder="Jane Doe" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="RegistrationNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="label">Registration Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="field"
-                        placeholder="e.g. 25BCE5612"
-                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="Gender"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="label">Gender</FormLabel>
-                    <FormControl>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
-                        <SelectTrigger className="field">
-                          <SelectValue placeholder="Select gender" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {GENDER_OPTIONS.map((option) => (
-                            <SelectItem key={option} value={option}>
-                              {option}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="Year of Study"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="label">Year of Study</FormLabel>
-                    <FormControl>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
-                        <SelectTrigger className="field">
-                          <SelectValue placeholder="Select year" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {YEAR_OPTIONS.map((option) => (
-                            <SelectItem key={option} value={option}>
-                              {option}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="Email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="label">Email Address</FormLabel>
-                    <FormControl>
-                      <Input {...field} className="field" readOnly type="email" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="Phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="label">Phone (WhatsApp)</FormLabel>
-                    <FormControl>
-                      <Input {...field} className="field" placeholder="+919876543210" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <div className="mt-10 grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
+        {/* ================= LEFT: FORM ================= */}
+        <div className="flex flex-col gap-8 lg:col-span-8">
+          {/* Stepper */}
+          <div className="surface flex items-center justify-between gap-3 p-4 sm:p-5">
+            <div className="flex items-center gap-3">
+              <span
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                style={{ backgroundColor: "rgb(52 168 83 / 0.2)", color: "var(--g-green)" }}
+              >
+                <Check className="h-4 w-4" />
+              </span>
+              <span className="hidden text-sm font-medium text-muted-foreground sm:inline">
+                Track Choice
+              </span>
             </div>
 
-            <div className="mt-4">
-              <FormField
-                control={form.control}
-                name={GENERAL_QUESTION_NAME}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="label">{GENERAL_QUESTION_NAME}</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} className="field h-auto" rows={4} placeholder="2-3 Sentences" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="h-px w-8 bg-white/15" />
+
+            <div className="flex items-center gap-3">
+              <span
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                style={{ backgroundColor: "var(--g-blue)" }}
+              >
+                2
+              </span>
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold text-foreground">Assessment Form</span>
+                <span
+                  className="hidden text-[11px] font-medium sm:inline"
+                  style={{ color: "var(--g-blue)" }}
+                >
+                  Current Phase
+                </span>
+              </div>
             </div>
-          </section>
 
-          {departmentObjects[0] && renderDepartmentQuestions(departmentObjects[0], form)}
-          {departmentObjects[1] && renderDepartmentQuestions(departmentObjects[1], form)}
+            <div className="h-px w-8 bg-white/15" />
 
-          <div className="flex justify-end">
-            <button type="submit" disabled={isSubmitting} className="btn-primary px-8 py-3 text-base">
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isSubmitting ? "Submitting..." : "Submit Application"}
-            </button>
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/10 text-xs font-semibold">
+                3
+              </span>
+              <span className="hidden text-sm font-medium sm:inline">Review</span>
+            </div>
           </div>
-        </form>
-      </Form>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-8">
+              {/* SECTION 1 — Identification */}
+              <section className="surface relative overflow-hidden p-6 sm:p-8">
+                <div className="g-crown" style={{ backgroundColor: "var(--g-blue)" }} />
+
+                <div className="mb-6 flex items-start justify-between gap-4">
+                  <div>
+                    <div
+                      className="mb-1 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: "var(--g-blue)" }}
+                    >
+                      <span
+                        className="h-1.5 w-1.5 rounded-full"
+                        style={{ backgroundColor: "var(--g-blue)" }}
+                      />
+                      Step 01 &bull; Identification
+                    </div>
+                    <h2 className="font-display text-xl font-bold text-foreground">
+                      Academic &amp; Personal Credentials
+                    </h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Please make sure your registration number and student email match your
+                      official records.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="Name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">
+                          Full Name <span style={{ color: "var(--g-red)" }}>*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input {...field} className="field" placeholder="e.g. Alex Rivera" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="RegistrationNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">
+                          Registration Number <span style={{ color: "var(--g-red)" }}>*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="field font-mono uppercase"
+                            placeholder="e.g. 23BCE1042"
+                            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="Email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">Email Address</FormLabel>
+                        <FormControl>
+                          <Input {...field} className="field" readOnly type="email" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="Phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">
+                          Phone (WhatsApp) <span style={{ color: "var(--g-red)" }}>*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input {...field} className="field" placeholder="9876543210" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="Gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">Gender</FormLabel>
+                        <FormControl>
+                          <Select value={field.value || ""} onValueChange={field.onChange}>
+                            <SelectTrigger className="field">
+                              <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {GENDER_OPTIONS.map((option) => (
+                                <SelectItem key={option} value={option}>
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="Year of Study"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">Year of Study</FormLabel>
+                        <FormControl>
+                          <Select value={field.value || ""} onValueChange={field.onChange}>
+                            <SelectTrigger className="field">
+                              <SelectValue placeholder="Select year" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {YEAR_OPTIONS.map((option) => (
+                                <SelectItem key={option} value={option}>
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="mt-6">
+                  <FormField
+                    control={form.control}
+                    name={GENERAL_QUESTION_NAME}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">{GENERAL_QUESTION_NAME}</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            className="field resize-y leading-relaxed"
+                            rows={4}
+                            placeholder="2-3 sentences on why you want to join."
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </section>
+
+              {/* Per-department sections */}
+              {departmentObjects[0] && renderDepartmentQuestions(departmentObjects[0], form, 2)}
+              {departmentObjects[1] && renderDepartmentQuestions(departmentObjects[1], form, 3)}
+
+              {/* Submit bar */}
+              <section className="surface flex flex-col gap-6 p-6 sm:p-8">
+                <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <ShieldCheck className="h-4 w-4" style={{ color: "var(--g-green)" }} />
+                    <span>Your answers are saved as a draft on this device until you submit.</span>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="btn-primary w-full px-8 sm:w-auto"
+                  >
+                    {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                    {isSubmitting ? "Submitting..." : "Submit Application"}
+                    {!isSubmitting && <ArrowRight className="h-4 w-4" />}
+                  </button>
+                </div>
+              </section>
+            </form>
+          </Form>
+        </div>
+
+        {/* ================= RIGHT: SIDEBAR ================= */}
+        <aside className="flex flex-col gap-6 lg:col-span-4 lg:sticky lg:top-28">
+          {/* Candidate card */}
+          <div className="surface relative overflow-hidden p-6">
+            <div className="g-crown">
+              <div className="g-rule h-full">
+                <span />
+                <span />
+                <span />
+                <span />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 pt-2">
+              <span
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-lg font-bold"
+                style={{ backgroundColor: "rgb(66 133 244 / 0.15)", color: "var(--g-blue)" }}
+              >
+                {(user?.name || user?.email || "U").charAt(0).toUpperCase()}
+              </span>
+              <div className="flex min-w-0 flex-col">
+                <span className="truncate font-display text-base font-bold text-foreground">
+                  {user?.name || "Candidate"}
+                </span>
+                <span className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
+                  {user?.email}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-col gap-2.5 border-t border-white/10 pt-5">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Recruitment Tracks
+              </span>
+              {departmentObjects.map((department, index) => {
+                const name = typeof department === "string" ? department : department.name;
+                const tone = typeof department === "string" ? "var(--g-blue)" : department.tone;
+                const isDone = submittedDepartments.includes(name);
+                return (
+                  <div
+                    key={name || index}
+                    className="flex items-center justify-between gap-2 rounded-xl border border-white/5 p-3"
+                    style={{ backgroundColor: "var(--surface-container)" }}
+                  >
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-full"
+                        style={{ backgroundColor: tone }}
+                      />
+                      <span className="truncate text-xs font-medium text-foreground">{name}</span>
+                    </div>
+                    <span
+                      className="shrink-0 rounded px-2 py-0.5 text-[10px] font-semibold"
+                      style={
+                        isDone
+                          ? { backgroundColor: "rgb(52 168 83 / 0.15)", color: "var(--g-green)" }
+                          : { backgroundColor: `${tone}26`, color: tone }
+                      }
+                    >
+                      {isDone ? "Submitted" : "Pending"}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Progress card */}
+          <div className="surface flex flex-col gap-5 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Application Status
+                </span>
+                <h3 className="mt-0.5 font-display text-lg font-bold text-foreground">
+                  {completedCount} of {departmentNames.length} submitted
+                </h3>
+              </div>
+            </div>
+
+            <div
+              className="flex h-2.5 w-full overflow-hidden rounded-full"
+              style={{ backgroundColor: "var(--surface-container)" }}
+            >
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${departmentNames.length ? (completedCount / departmentNames.length) * 100 : 0}%`,
+                  backgroundColor: "var(--g-green)",
+                }}
+              />
+            </div>
+
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Answer every question you can — panels weigh specifics far more heavily than
+              length.
+            </p>
+          </div>
+        </aside>
+      </div>
     </main>
   );
 };
 
-const renderDepartmentQuestions = (department, form) => {
+const renderDepartmentQuestions = (department, form, stepNumber) => {
   const name = typeof department === "string" ? department : department.name;
-  const tone = typeof department === "string" ? undefined : department.tone;
+  const tone = typeof department === "string" ? "var(--g-blue)" : department.tone;
 
   const questions = questionsForDepartment(name).filter(
     (question) => question.name !== GENERAL_QUESTION_NAME
@@ -484,42 +690,57 @@ const renderDepartmentQuestions = (department, form) => {
   if (!questions.length) return null;
 
   return (
-    <section key={name} className="surface overflow-hidden">
-      <div className="h-1 w-full" style={{ backgroundColor: tone || "hsl(var(--primary))" }} />
-      <div className="p-6">
-        <h2 className="text-lg font-semibold text-foreground">{name} Questions</h2>
+    <section key={name} className="surface relative overflow-hidden p-6 sm:p-8">
+      <div className="g-crown" style={{ backgroundColor: tone }} />
 
-        <div className="mt-4 space-y-4">
-          {questions.map((question) => {
-            const isCompact = question.type === "short-text";
-
-            return (
-              <FormField
-                key={question.name}
-                control={form.control}
-                name={question.name}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="label">{question.name}</FormLabel>
-                    <FormControl>
-                      {isCompact ? (
-                        <Input {...field} className="field" placeholder={question.placeholder || "Answer..."} />
-                      ) : (
-                        <Textarea
-                          {...field}
-                          className="field h-auto"
-                          rows={4}
-                          placeholder={question.placeholder || "2-3 sentences"}
-                        />
-                      )}
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            );
-          })}
+      <div className="mb-6">
+        <div
+          className="mb-1 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider"
+          style={{ color: tone }}
+        >
+          <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone }} />
+          Step {String(stepNumber).padStart(2, "0")} &bull; {name}
         </div>
+        <h2 className="font-display text-xl font-bold text-foreground">{name} Questions</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Answered by the {name} review panel.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-6">
+        {questions.map((question) => {
+          const isCompact = question.type === "short-text";
+
+          return (
+            <FormField
+              key={question.name}
+              control={form.control}
+              name={question.name}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="label">{question.name}</FormLabel>
+                  <FormControl>
+                    {isCompact ? (
+                      <Input
+                        {...field}
+                        className="field"
+                        placeholder={question.placeholder || "Answer..."}
+                      />
+                    ) : (
+                      <Textarea
+                        {...field}
+                        className="field resize-y leading-relaxed"
+                        rows={4}
+                        placeholder={question.placeholder || "2-3 sentences"}
+                      />
+                    )}
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          );
+        })}
       </div>
     </section>
   );

@@ -4,6 +4,9 @@
 
 /* ---------------------------------------------------------------------- */
 /* Fonts                                                                   */
+/* Plus Jakarta Sans (display) + Inter (body) are loaded via next/font in  */
+/* app/layout.js. Product Sans ships with the project and is kept as a     */
+/* display fallback.                                                       */
 /* ---------------------------------------------------------------------- */
 
 @font-face {
@@ -39,81 +42,98 @@
 }
 
 /* ---------------------------------------------------------------------- */
-/* Design tokens                                                          */
+/* Design tokens — "GDG Campus Dark Elevation"                            */
+/* Tonal layering, not drop shadows. Google quad-colour used functionally. */
 /* ---------------------------------------------------------------------- */
 
 :root {
+  /* Light theme kept complete so shadcn primitives stay valid, but the app
+     is designed dark-first and <html> ships with .dark. */
   --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  --foreground: 222 47% 11%;
 
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card-foreground: 222 47% 11%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --popover-foreground: 222 47% 11%;
 
   --primary: 217 89% 61%;
-  --primary-foreground: 210 40% 98%;
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
 
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
 
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
 
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive: 5 81% 56%;
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
   --ring: 217 89% 61%;
 
-  --radius: 0.75rem;
+  --radius: 1rem;
+
+  /* Surface tiers (raw hex, for tonal elevation) */
+  --surface-base: #0f1015;
+  --surface: #1a1d24;
+  --surface-container: #21252e;
+  --surface-container-high: #2a2f3b;
+  --surface-stroke: #2d333f;
 
   /* Google brand palette */
   --g-blue: #4285f4;
   --g-red: #ea4335;
   --g-yellow: #fbbc05;
   --g-green: #34a853;
+  --g-blue-hover: #3367d6;
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
+  --background: 230 17% 7%;      /* #0F1015 */
+  --foreground: 200 12% 95%;     /* #F1F3F4 */
 
-  --card: 222.2 70% 7%;
-  --card-foreground: 210 40% 98%;
+  --card: 222 16% 12%;           /* #1A1D24 */
+  --card-foreground: 200 12% 95%;
 
-  --popover: 222.2 70% 7%;
-  --popover-foreground: 210 40% 98%;
+  --popover: 222 16% 15%;        /* #21252E */
+  --popover-foreground: 200 12% 95%;
 
-  --primary: 217 89% 61%;
-  --primary-foreground: 222.2 47.4% 11.2%;
+  --primary: 217 89% 61%;        /* #4285F4 */
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 222 16% 15%;      /* #21252E */
+  --secondary-foreground: 200 12% 95%;
 
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
+  --muted: 222 16% 15%;
+  --muted-foreground: 210 6% 63%; /* #9AA0A6 */
 
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
+  --accent: 222 17% 20%;         /* #2A2F3B */
+  --accent-foreground: 200 12% 95%;
 
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive: 5 81% 56%;      /* #EA4335 */
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
+  --border: 220 17% 21%;         /* #2D333F */
+  --input: 220 17% 21%;
   --ring: 217 89% 61%;
 
-  /* Google brand palette stays constant across themes */
+  --surface-base: #0f1015;
+  --surface: #1a1d24;
+  --surface-container: #21252e;
+  --surface-container-high: #2a2f3b;
+  --surface-stroke: #2d333f;
+
   --g-blue: #4285f4;
   --g-red: #ea4335;
   --g-yellow: #fbbc05;
   --g-green: #34a853;
+  --g-blue-hover: #3367d6;
 }
 
 @layer base {
@@ -125,6 +145,15 @@
     @apply bg-background text-foreground;
     margin: 0;
     padding: 0;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), "Product Sans", ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 
@@ -134,31 +163,65 @@
 
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-7xl px-6 lg:px-12;
   }
 
+  /* Tonal surfaces — elevation by lightness, plus a 1px ghost stroke */
   .surface {
-    @apply rounded-lg border border-border bg-card text-card-foreground shadow-sm;
+    @apply rounded-2xl border border-border bg-card text-card-foreground;
   }
 
+  .surface-raised {
+    @apply rounded-2xl border border-white/10 text-foreground;
+    background-color: var(--surface-container);
+    box-shadow: 0 4px 20px -2px rgb(0 0 0 / 0.45);
+  }
+
+  .surface-overlay {
+    @apply rounded-2xl border border-white/[0.08] text-foreground;
+    background-color: var(--surface-container-high);
+    box-shadow: 0 12px 32px -4px rgb(0 0 0 / 0.65);
+  }
+
+  /* Buttons — Material 3 pill geometry */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-3 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-primary {
-    @apply btn bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply btn text-white;
+    background-color: var(--g-blue);
+    box-shadow: 0 8px 24px -8px rgb(66 133 244 / 0.5);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--g-blue-hover);
   }
 
   .btn-secondary {
-    @apply btn bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    @apply btn border border-white/10 text-foreground;
+    background-color: var(--surface-container);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--surface-container-high);
   }
 
   .btn-ghost {
-    @apply btn bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground;
+    @apply btn bg-transparent text-muted-foreground hover:bg-white/5 hover:text-foreground;
   }
 
+  /* Form controls — 8px radius, dual focus ring */
   .field {
-    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex w-full rounded-xl border border-white/10 px-4 py-3 text-sm text-foreground transition-all placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+    background-color: var(--surface-container);
+  }
+
+  .field:focus,
+  .field:focus-visible,
+  .field:focus-within {
+    border-color: var(--g-blue);
+    box-shadow: 0 0 0 3px rgb(66 133 244 / 0.2);
   }
 
   .label {
@@ -166,16 +229,22 @@
   }
 
   .badge {
-    @apply inline-flex items-center rounded-full border border-border bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-muted-foreground;
+    background-color: var(--surface-container);
   }
 
-  /* The four-colour Google bar */
+  /* Eyebrow label above section headings */
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-widest;
+    color: var(--g-blue);
+  }
+
+  /* Signature quad-colour strip: <div class="g-rule"><span/>x4</div> */
   .g-rule {
     display: flex;
-    height: 4px;
+    height: 3px;
     width: 100%;
     overflow: hidden;
-    border-radius: 9999px;
   }
 
   .g-rule > span {
@@ -197,6 +266,35 @@
   .g-rule > span:nth-child(4) {
     background-color: var(--g-green);
   }
+
+  /* Quad-colour crown pinned to the top edge of a card */
+  .g-crown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  /* Pill navigation group used in the header */
+  .nav-pill-group {
+    @apply flex items-center gap-1.5 rounded-full border border-white/5 px-2 py-1.5;
+    background-color: rgb(22 23 29 / 0.7);
+  }
+
+  .nav-pill {
+    @apply rounded-full px-5 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-white/5 hover:text-foreground;
+  }
+
+  .nav-pill-active {
+    @apply text-foreground;
+    background-color: var(--surface-container-high);
+  }
+
+  /* Icon tile used on department / feature cards */
+  .icon-tile {
+    @apply flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border;
+  }
 }
 
 /* ---------------------------------------------------------------------- */
@@ -211,14 +309,36 @@
   .hero-glow::before {
     content: "";
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(840px, 100%);
+    height: 450px;
     z-index: -1;
     background: radial-gradient(
-      60% 50% at 50% 0%,
-      hsl(var(--primary) / 0.25),
-      transparent 70%
+      closest-side,
+      rgb(26 115 232 / 0.18),
+      rgb(52 168 83 / 0.06),
+      transparent
     );
+    filter: blur(40px);
     pointer-events: none;
+  }
+
+  .text-gradient-g {
+    background-image: linear-gradient(to right, #8ab4f8, #c58af9, #81c995);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

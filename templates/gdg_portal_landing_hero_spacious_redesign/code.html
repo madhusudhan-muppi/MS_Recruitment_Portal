@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#121318",
+            "surface-container-lowest": "#0D0E12",
+            "surface-container-low": "#16171D",
+            "surface-container": "#1E2028",
+            "surface-container-high": "#282A34",
+            "surface-container-highest": "#323542",
+            "on-surface": "#F1F3F9",
+            "on-surface-variant": "#9CA3AF",
+            "primary": "#8AB4F8",
+            "primary-container": "#1A73E8",
+            "on-primary": "#FFFFFF",
+            "secondary": "#81C995",
+            "tertiary": "#FDD663",
+            "error": "#F28B82"
+          },
+          fontFamily: {
+            "sans": ["Google Sans", "Plus Jakarta Sans", "Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "xl": "1rem",
+            "2xl": "1.25rem",
+            "3xl": "1.75rem"
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased selection:bg-primary/20 selection:text-primary min-h-screen">
+<!-- Sticky Top Navigation Chrome -->
+<header class="sticky top-0 z-50 w-full bg-surface/85 backdrop-blur-xl border-b border-white/5 transition-all">
+<div class="max-w-7xl mx-auto px-6 sm:px-8 h-20 flex items-center justify-between gap-6">
+<!-- Brand Logo -->
+<a class="flex items-center gap-3 shrink-0 group transition-transform active:scale-95" href="#">
+<img alt="GDG on Campus VIT Chennai" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V6WmLHn-PUYIWlcX3lYTQKVlRxluOnQciwnfqIEN32TKPwxMNJZlfP3goHFA-Q6nlt3iYZqvc4KPnLjLbJ5R_cBCoT02PvOqqgaZLayLjmRRwFcQATnKXUV8LG4uRATbOh1X8iD_m-APV5DGfuX68-JhY1KQQs4P165PJqSxxXJl6cZm-LN7AI-VlZxbBKiWjW0rbWcpX3pp9FukMgxV4gFrQLGzLCyjGHwWsDkVc_tNF_v9zF6146HQ"/>
+</a>
+<!-- Navigation Links -->
+<nav class="hidden lg:flex items-center gap-1.5 bg-surface-container-low/70 border border-white/5 px-2 py-1.5 rounded-full">
+<a aria-current="page" class="px-5 py-2 rounded-full text-sm font-medium bg-surface-container-high text-primary shadow-sm transition-all" data-path="overview" href="#">Overview</a>
+<a class="px-5 py-2 rounded-full text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all" data-path="departments" href="#">Departments</a>
+<a class="px-5 py-2 rounded-full text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all" data-path="apply-now" href="#">Apply Now</a>
+<a class="px-5 py-2 rounded-full text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all" data-path="my-application" href="#">My Application</a>
+<a class="px-5 py-2 rounded-full text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all" data-path="admin-review" href="#">Admin Review</a>
+</nav>
+<!-- Right Header Actions -->
+<div class="flex items-center gap-4 shrink-0">
+<div class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container border border-white/5">
+<span class="w-2 h-2 rounded-full bg-[#34A853] animate-pulse"></span>
+<span class="text-xs font-medium tracking-wide text-on-surface-variant">Fall '25 Cycle</span>
+</div>
+<div class="flex items-center gap-3 pl-1">
+<img alt="Profile Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-white/10 hover:ring-primary/50 transition-all cursor-pointer" src="https://lh3.googleusercontent.com/aida/AEtjO1VF31OqXRF-Tr7g2HEdQuN7L8r8sOI8ce5mC9zSUKtR4cDRTPZjITAQunFSUgp_VqBmDIaOiLo-UThyIrgcr0jF2MSnBbUIS8_rDdDJv8BeU4mKhCPxG4YsSB8potrgZI732z8PUUS8CGcq7lt-cy-CWBU5nLDA2Y-ufglkMw8k_GP7qAKI2MtPybCeqKZ2lWumMbD2W9fq1uaBwGIChrmIzDOjBxsosaGOMmI87nz1rg_ta_tlj8Tmgqg"/>
+<a class="hidden md:inline-block text-sm font-medium text-primary hover:text-white transition-colors" data-path="login" href="#">Sign In</a>
+</div>
+</div>
+</div>
+<!-- Signature 4-Color Google Accent Line with Clean Padding -->
+<div class="w-full flex h-[3px]">
+<span class="h-full w-1/4 bg-[#4285F4]"></span>
+<span class="h-full w-1/4 bg-[#EA4335]"></span>
+<span class="h-full w-1/4 bg-[#FBBC05]"></span>
+<span class="h-full w-1/4 bg-[#34A853]"></span>
+</div>
+</header>
+<main class="w-full">
+<!-- Hero Section: Expansive & Breathy -->
+<section class="relative w-full py-24 sm:py-32 overflow-hidden flex flex-col items-center text-center">
+<!-- Ambient Glow Accents -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[840px] h-[450px] bg-gradient-to-b from-[#1A73E8]/15 via-[#34A853]/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-64 right-10 w-[380px] h-[320px] bg-[#FBBC05]/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="max-w-5xl mx-auto px-6 sm:px-8 flex flex-col items-center">
+<!-- Status Pill Chip -->
+<div class="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-surface-container border border-white/10 shadow-sm mb-8 hover:border-white/20 transition-all">
+<span class="w-2.5 h-2.5 rounded-full bg-[#34A853]"></span>
+<span class="text-xs font-semibold text-on-surface tracking-wider uppercase">Fall 2025 Core Team &amp; Technical Track Recruitment Open</span>
+</div>
+<!-- Headline -->
+<h1 class="font-sans text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-on-surface max-w-4xl leading-[1.15]">
+          Build what's next with <br/>
+<span class="bg-gradient-to-r from-[#8AB4F8] via-[#C58AF9] to-[#81C995] bg-clip-text text-transparent">Google Developer Groups.</span>
+</h1>
+<!-- Subheading -->
+<p class="mt-8 text-lg sm:text-xl text-on-surface-variant max-w-2xl font-normal leading-relaxed">
+          Join the premier student tech community at VIT Chennai. Learn cloud, web, AI/ML, and design, collaborate on real-world community impact projects, and grow alongside fellow innovators.
+        </p>
+<!-- CTA Buttons -->
+<div class="flex flex-wrap items-center justify-center gap-4 mt-10">
+<a class="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white font-medium text-base shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all" data-path="departments" href="#">
+<span>Explore Departments &amp; Apply</span>
+<span class="material-symbols-outlined text-xl leading-none">arrow_forward</span>
+</a>
+<a class="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface border border-white/10 font-medium text-base transition-all" href="#recruitment-timeline">
+<span class="material-symbols-outlined text-xl text-on-surface-variant leading-none">schedule</span>
+<span>Timeline &amp; Process</span>
+</a>
+</div>
+<!-- Bouncy Google Sync Indicator -->
+<div class="mt-14 inline-flex items-center gap-3.5 px-5 py-2.5 rounded-full bg-surface-container-low border border-white/5 shadow-sm">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#4285F4] animate-bounce" style="animation-delay: 0s; animation-duration: 0.9s;"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#EA4335] animate-bounce" style="animation-delay: 0.15s; animation-duration: 0.9s;"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#FBBC05] animate-bounce" style="animation-delay: 0.3s; animation-duration: 0.9s;"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#34A853] animate-bounce" style="animation-delay: 0.45s; animation-duration: 0.9s;"></span>
+</div>
+<span class="text-xs text-on-surface-variant font-medium">Portal syncing live applications (<span class="text-secondary font-semibold">342 registered today</span>)</span>
+</div>
+</div>
+</section>
+<!-- Stat Strip Section -->
+<section class="w-full py-16 bg-surface-container-lowest/60 border-y border-white/5">
+<div class="max-w-7xl mx-auto px-6 sm:px-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Metric 1: Blue -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:border-[#4285F4]/40 hover:-translate-y-1 transition-all">
+<div class="h-1 w-12 bg-[#4285F4] rounded-full mb-6"></div>
+<div>
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-semibold uppercase tracking-wider text-primary">Active Tracks</span>
+<span class="material-symbols-outlined text-primary text-2xl">category</span>
+</div>
+<h3 class="text-3xl font-bold font-sans text-on-surface tracking-tight">12 Open</h3>
+<p class="text-sm text-on-surface-variant mt-3 leading-relaxed">Web, AI/ML, Cloud, Android, UI/UX, DevRel, and Management</p>
+</div>
+</div>
+<!-- Metric 2: Yellow -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:border-[#FBBC05]/40 hover:-translate-y-1 transition-all">
+<div class="h-1 w-12 bg-[#FBBC05] rounded-full mb-6"></div>
+<div>
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-semibold uppercase tracking-wider text-[#FDD663]">Alumni &amp; Network</span>
+<span class="material-symbols-outlined text-[#FDD663] text-2xl">groups</span>
+</div>
+<h3 class="text-3xl font-bold font-sans text-on-surface tracking-tight">1,800+</h3>
+<p class="text-sm text-on-surface-variant mt-3 leading-relaxed">Active student developers, technical alumni, and mentors</p>
+</div>
+</div>
+<!-- Metric 3: Green -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:border-[#34A853]/40 hover:-translate-y-1 transition-all">
+<div class="h-1 w-12 bg-[#34A853] rounded-full mb-6"></div>
+<div>
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-semibold uppercase tracking-wider text-secondary">Flagship Initiatives</span>
+<span class="material-symbols-outlined text-secondary text-2xl">rocket_launch</span>
+</div>
+<h3 class="text-3xl font-bold font-sans text-on-surface tracking-tight">35+ Annual</h3>
+<p class="text-sm text-on-surface-variant mt-3 leading-relaxed">DevFests, Solution Challenge, bootcamps, and hack nights</p>
+</div>
+</div>
+<!-- Metric 4: Red -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:border-[#EA4335]/40 hover:-translate-y-1 transition-all">
+<div class="h-1 w-12 bg-[#EA4335] rounded-full mb-6"></div>
+<div>
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-semibold uppercase tracking-wider text-error">Round 1 Priority</span>
+<span class="material-symbols-outlined text-error text-2xl">event_available</span>
+</div>
+<h3 class="text-3xl font-bold font-sans text-on-surface tracking-tight">Sept 15</h3>
+<p class="text-sm text-on-surface-variant mt-3 leading-relaxed">Closes 11:59 PM IST. Early applications reviewed on rolling basis.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Why GDG Section -->
+<section class="w-full py-24 sm:py-32">
+<div class="max-w-7xl mx-auto px-6 sm:px-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+<div class="max-w-xl">
+<span class="text-xs font-bold text-primary uppercase tracking-widest">Excellence in Execution</span>
+<h2 class="text-3xl sm:text-4xl font-bold font-sans text-on-surface mt-2 tracking-tight">Why Build with GDG on Campus?</h2>
+</div>
+<p class="text-base text-on-surface-variant max-w-md leading-relaxed">
+            We bridge the gap between academic theory and industry engineering standards through direct support from the Google Developer ecosystem.
+          </p>
+</div>
+<!-- 3 Bento Columns -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 sm:p-10 flex flex-col justify-between shadow-md hover:border-white/20 transition-all group">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-[#4285F4]/10 border border-[#4285F4]/20 flex items-center justify-center text-[#4285F4] mb-8 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl">cloud</span>
+</div>
+<h3 class="text-xl font-bold font-sans text-on-surface mb-3">Mentorship &amp; Google Cloud Credits</h3>
+<p class="text-base text-on-surface-variant leading-relaxed">
+                Receive official Google Cloud sandbox vouchers, access specialized Qwiklabs pathways, and get 1-on-1 code reviews directly from Google Developer Experts (GDEs).
+              </p>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-xl">verified</span>
+<span class="text-sm font-medium text-on-surface-variant">Includes Gemini API Enterprise Access</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 sm:p-10 flex flex-col justify-between shadow-md hover:border-white/20 transition-all group">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-[#34A853]/10 border border-[#34A853]/20 flex items-center justify-center text-[#34A853] mb-8 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl">terminal</span>
+</div>
+<h3 class="text-xl font-bold font-sans text-on-surface mb-3">Industry-Grade Open Source Projects</h3>
+<p class="text-base text-on-surface-variant leading-relaxed">
+                No toy apps or boilerplate exercises. Build production-level web platforms, microservices architectures, ML inference pipelines, and native apps used by thousands across campus.
+              </p>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl">code_blocks</span>
+<span class="text-sm font-medium text-on-surface-variant">Public GitHub Repos &amp; CI/CD Pipelines</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 sm:p-10 flex flex-col justify-between shadow-md hover:border-white/20 transition-all group">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-[#FBBC05]/10 border border-[#FBBC05]/20 flex items-center justify-center text-[#FBBC05] mb-8 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl">public</span>
+</div>
+<h3 class="text-xl font-bold font-sans text-on-surface mb-3">Global Community Pathways</h3>
+<p class="text-base text-on-surface-variant leading-relaxed">
+                Represent VIT Chennai at global Google Solution Challenge hackathons, DevFest stages across India, and connect with global alumni at top-tier product organizations.
+              </p>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 flex items-center gap-3">
+<span class="material-symbols-outlined text-[#FDD663] text-xl">military_tech</span>
+<span class="text-sm font-medium text-on-surface-variant">Direct Solution Challenge Fast-Track</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Structured Steps / Process Timeline -->
+<section class="w-full py-24 sm:py-32 bg-surface-container-low/60 border-y border-white/5" id="recruitment-timeline">
+<div class="max-w-7xl mx-auto px-6 sm:px-8">
+<div class="text-center max-w-2xl mx-auto mb-20">
+<span class="text-xs font-bold text-secondary uppercase tracking-widest">Structured Evaluation</span>
+<h2 class="text-3xl sm:text-4xl font-bold font-sans text-on-surface mt-2 tracking-tight">Three Steps to Membership</h2>
+<p class="text-base text-on-surface-variant mt-3 leading-relaxed">
+            Transparent, criteria-driven assessment designed to evaluate problem-solving and domain aptitude.
+          </p>
+</div>
+<!-- 3 Steps Grid with Generous Spacing -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Step 1 -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 sm:p-10 flex flex-col justify-between shadow-sm hover:border-white/20 transition-all">
+<div>
+<div class="flex items-center justify-between mb-8">
+<span class="text-4xl font-black font-sans text-white/20">01</span>
+<span class="px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">Active Now</span>
+</div>
+<h3 class="text-xl font-bold font-sans text-on-surface mb-3">Application &amp; Portfolio</h3>
+<p class="text-base text-on-surface-variant leading-relaxed">
+                Submit your profile, technical track preferences, GitHub repos, Behance links, or past management leadership experience.
+              </p>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 flex items-center gap-2.5 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span>Takes ~10 minutes</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 sm:p-10 flex flex-col justify-between shadow-sm hover:border-white/20 transition-all">
+<div>
+<div class="flex items-center justify-between mb-8">
+<span class="text-4xl font-black font-sans text-white/20">02</span>
+<span class="px-3.5 py-1.5 rounded-full bg-surface-container-high border border-white/10 text-on-surface-variant text-xs font-semibold">Starts Sept 18</span>
+</div>
+<h3 class="text-xl font-bold font-sans text-on-surface mb-3">Practical Assessment Task</h3>
+<p class="text-base text-on-surface-variant leading-relaxed">
+                Shortlisted candidates receive a weekend domain assignment: mini-bug triage, UI component kit, API integration, or event pitch.
+              </p>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 flex items-center gap-2.5 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[#FDD663] text-xl">assignment</span>
+<span>48-hour take-home format</span>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="bg-[#1E2028] border border-white/10 rounded-2xl p-8 sm:p-10 flex flex-col justify-between shadow-sm hover:border-white/20 transition-all">
+<div>
+<div class="flex items-center justify-between mb-8">
+<span class="text-4xl font-black font-sans text-white/20">03</span>
+<span class="px-3.5 py-1.5 rounded-full bg-surface-container-high border border-white/10 text-on-surface-variant text-xs font-semibold">Late September</span>
+</div>
+<h3 class="text-xl font-bold font-sans text-on-surface mb-3">Peer Technical Interview</h3>
+<p class="text-base text-on-surface-variant leading-relaxed">
+                A friendly 30-minute dialogue with the domain lead discussing your task solution, technical curiosity, and team fit.
+              </p>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 flex items-center gap-2.5 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-xl">forum</span>
+<span>In-person at VIT Chennai</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom CTA Banner -->
+<section class="w-full py-24 sm:py-32">
+<div class="max-w-7xl mx-auto px-6 sm:px-8">
+<div class="bg-[#1E2028] border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative">
+<!-- Top Accent Google 4-Color Strip -->
+<div class="w-full flex h-1">
+<span class="h-full w-1/4 bg-[#4285F4]"></span>
+<span class="h-full w-1/4 bg-[#EA4335]"></span>
+<span class="h-full w-1/4 bg-[#FBBC05]"></span>
+<span class="h-full w-1/4 bg-[#34A853]"></span>
+</div>
+<div class="p-8 sm:p-16 flex flex-col lg:flex-row items-center justify-between gap-10">
+<div class="flex flex-col text-left max-w-2xl">
+<div class="flex items-center gap-2 mb-3">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="text-xs font-bold text-secondary uppercase tracking-widest">Ready to Shape the Future?</span>
+</div>
+<h3 class="text-3xl sm:text-4xl font-bold font-sans text-on-surface tracking-tight">Find your core track and submit your candidacy.</h3>
+<p class="text-base text-on-surface-variant mt-4 leading-relaxed">
+                Choose between Frontend Web, Backend Cloud, Machine Learning, Mobile Development (Flutter/Android), Creative Design, Public Relations, or Event Operations.
+              </p>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto shrink-0">
+<a class="w-full sm:w-auto text-center px-8 py-4 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white font-medium text-base shadow-lg shadow-blue-500/20 transition-all" data-path="apply-now" href="#">
+                Begin Application
+              </a>
+<a class="w-full sm:w-auto text-center px-8 py-4 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface border border-white/10 font-medium text-base transition-all" data-path="my-application" href="#">
+                Check Status
+              </a>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Spacious 4-Column Footer -->
+<footer class="w-full bg-surface-container-lowest border-t border-white/5">
+<!-- Signature 4-Color Accent Border -->
+<div class="w-full flex h-[3px]">
+<span class="h-full w-1/4 bg-[#4285F4]"></span>
+<span class="h-full w-1/4 bg-[#EA4335]"></span>
+<span class="h-full w-1/4 bg-[#FBBC05]"></span>
+<span class="h-full w-1/4 bg-[#34A853]"></span>
+</div>
+<div class="max-w-7xl mx-auto px-6 sm:px-8 py-20">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-16">
+<!-- Col 1 & 2: Branding & Disclaimer -->
+<div class="lg:col-span-2 flex flex-col gap-5">
+<div class="flex items-center gap-3">
+<img alt="GDG on Campus VIT Chennai" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V6WmLHn-PUYIWlcX3lYTQKVlRxluOnQciwnfqIEN32TKPwxMNJZlfP3goHFA-Q6nlt3iYZqvc4KPnLjLbJ5R_cBCoT02PvOqqgaZLayLjmRRwFcQATnKXUV8LG4uRATbOh1X8iD_m-APV5DGfuX68-JhY1KQQs4P165PJqSxxXJl6cZm-LN7AI-VlZxbBKiWjW0rbWcpX3pp9FukMgxV4gFrQLGzLCyjGHwWsDkVc_tNF_v9zF6146HQ"/>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed max-w-md">
+            Google Developer Groups on Campus is an independent, student-led community backed by Google Developers. Student organizers operate voluntarily, and chapter activities are not formally operated by Google LLC.
+          </p>
+<span class="text-xs text-on-surface-variant/60 mt-2">© 2025 GDG on Campus VIT Chennai. All rights reserved.</span>
+</div>
+<!-- Col 3: Tracks -->
+<div class="flex flex-col gap-4">
+<h4 class="text-xs font-bold text-on-surface uppercase tracking-widest font-sans">Recruitment Tracks</h4>
+<ul class="flex flex-col gap-3 text-sm text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors" data-path="departments" href="#">Technical &amp; AI Core</a></li>
+<li><a class="hover:text-primary transition-colors" data-path="departments" href="#">Cloud &amp; DevOps</a></li>
+<li><a class="hover:text-primary transition-colors" data-path="departments" href="#">Design &amp; Creative</a></li>
+<li><a class="hover:text-primary transition-colors" data-path="departments" href="#">Management &amp; Outreach</a></li>
+</ul>
+</div>
+<!-- Col 4: Community Links -->
+<div class="flex flex-col gap-4">
+<h4 class="text-xs font-bold text-on-surface uppercase tracking-widest font-sans">Community Links</h4>
+<ul class="flex flex-col gap-3 text-sm text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors flex items-center gap-1.5" href="#"><span>LinkedIn Page</span><span class="material-symbols-outlined text-xs">north_east</span></a></li>
+<li><a class="hover:text-primary transition-colors flex items-center gap-1.5" href="#"><span>GitHub Organization</span><span class="material-symbols-outlined text-xs">north_east</span></a></li>
+<li><a class="hover:text-primary transition-colors flex items-center gap-1.5" href="#"><span>Instagram Handle</span><span class="material-symbols-outlined text-xs">north_east</span></a></li>
+<li><a class="hover:text-primary transition-colors flex items-center gap-1.5" href="#"><span>Community Guidelines</span><span class="material-symbols-outlined text-xs">north_east</span></a></li>
+</ul>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

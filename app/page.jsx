@@ -1,12 +1,21 @@
 "use client";
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 
 // Component imports
 import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
+import ValueProps from "@/components/ValueProps";
+import ProcessTimeline from "@/components/ProcessTimeline";
 import Footer from "@/components/Footer";
 import PopupComp from "@/components/PopupComp";
 import { authClient } from "@/lib/auth-client";
+
+// WebGL hero backdrop — landing page only, and never server-rendered, so
+// three.js stays out of every other route's bundle.
+const HeroBackground = dynamic(() => import("@/components/HeroBackground"), {
+  ssr: false,
+});
 
 // Render modal notification wrapper
 const NoticeDialogContainer = ({ isOpen, onClose }) => {
@@ -48,7 +57,12 @@ const Home = () => {
           onClose={handleDialogClose}
         />
       )}
-      <Hero />
+      <div className="relative isolate">
+        <HeroBackground />
+        <Hero />
+      </div>
+      <ValueProps />
+      <ProcessTimeline />
       <div className="mt-auto">
         <Footer />
       </div>

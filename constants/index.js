@@ -18,8 +18,13 @@ export const months = [
 ];
 
 // Organization-wide constants
-export const ORG_NAME = "Organization Name";
+export const ORG_NAME = "GDG VIT Chennai";
+export const ORG_LONG_NAME = "GDG on Campus VIT Chennai";
 export const MAX_APPLICATIONS = 2;
+
+// Shown in the footer — GDG on Campus chapters are required to carry this.
+export const ORG_DISCLAIMER =
+  "Google Developer Groups on Campus is an independent, student-led community backed by Google Developers. Student organizers operate voluntarily, and chapter activities are not formally operated by Google LLC.";
 
 // Department Details
 export const reviews = [

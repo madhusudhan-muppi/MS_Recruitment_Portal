@@ -2,16 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
+import Logo from "@/components/Logo";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import GDGLoader from "@/components/GDGLoader";
@@ -57,7 +50,11 @@ export default function SignInPage() {
   }, [session, isPending, router]);
 
   if (isPending) {
-    return <GDGLoader />;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <GDGLoader />
+      </div>
+    );
   }
 
   if (session?.user) {
@@ -71,10 +68,7 @@ export default function SignInPage() {
   const handleGoogleSignIn = async () => {
     setIsGoogleSubmitting(true);
     try {
-      const res = await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
-      });
+      const res = await authClient.signIn.social({ provider: "google", callbackURL: "/" });
       if (res?.error) {
         toast.error(res.error.message || "Google sign-in failed.");
         setIsGoogleSubmitting(false);
@@ -106,12 +100,7 @@ export default function SignInPage() {
     setSubmitting(true);
     try {
       if (mode === "signup") {
-        const res = await authClient.signUp.email({
-          email,
-          password,
-          name,
-          callbackURL: "/",
-        });
+        const res = await authClient.signUp.email({ email, password, name, callbackURL: "/" });
         if (res?.error) {
           toast.error(res.error.message || "Failed to create account.");
         } else {
@@ -119,11 +108,7 @@ export default function SignInPage() {
           router.push("/");
         }
       } else {
-        const res = await authClient.signIn.email({
-          email,
-          password,
-          callbackURL: "/",
-        });
+        const res = await authClient.signIn.email({ email, password, callbackURL: "/" });
         if (res?.error) {
           toast.error(res.error.message || "Invalid credentials.");
         } else {
@@ -142,29 +127,42 @@ export default function SignInPage() {
   const isBusy = submitting || isGoogleSubmitting;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="surface w-full max-w-sm overflow-hidden p-0">
-        <div className="g-rule">
-          <span />
-          <span />
-          <span />
-          <span />
+    <main className="hero-glow flex min-h-screen flex-col items-center justify-center bg-background p-4">
+      <Link href="/" className="mb-8">
+        <Logo className="h-9 w-auto" />
+      </Link>
+
+      <div className="surface relative w-full max-w-md overflow-hidden">
+        <div className="g-crown">
+          <div className="g-rule h-full">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
         </div>
 
-        <CardHeader className="text-center">
-          <CardTitle>Recruitment 2026</CardTitle>
-          <CardDescription>Candidate Portal</CardDescription>
-        </CardHeader>
+        <div className="p-8">
+          <div className="text-center">
+            <h1 className="font-display text-2xl font-bold text-foreground">
+              {mode === "signin" ? "Welcome back" : "Create your account"}
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Recruitment 2026 &middot; Candidate Portal
+            </p>
+          </div>
 
-        <CardContent>
-          <div className="grid grid-cols-2 gap-1 rounded-md bg-secondary p-1 text-sm">
+          <div
+            className="mt-6 grid grid-cols-2 gap-1 rounded-full p-1 text-sm"
+            style={{ backgroundColor: "var(--surface-container)" }}
+          >
             <button
               type="button"
               onClick={() => setMode("signin")}
-              className={`rounded-sm px-3 py-1.5 font-medium transition-colors ${
+              className={`rounded-full px-3 py-2 font-medium transition-colors ${
                 mode === "signin"
                   ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Sign In
@@ -172,38 +170,44 @@ export default function SignInPage() {
             <button
               type="button"
               onClick={() => setMode("signup")}
-              className={`rounded-sm px-3 py-1.5 font-medium transition-colors ${
+              className={`rounded-full px-3 py-2 font-medium transition-colors ${
                 mode === "signup"
                   ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Create Account
             </button>
           </div>
 
-          <Button
+          {/* Google SSO — white pill, per the design spec */}
+          <button
             type="button"
-            variant="outline"
             onClick={handleGoogleSignIn}
             disabled={isBusy}
-            className="btn-secondary mt-4 w-full gap-2"
+            className="btn mt-6 w-full gap-3 bg-white text-[#1F1F1F] hover:bg-white/90"
           >
-            <GoogleLogo />
-            {isGoogleSubmitting ? "Connecting..." : "Continue with Google"}
-          </Button>
+            {isGoogleSubmitting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <GoogleLogo />
+            )}
+            {isGoogleSubmitting ? "Connecting..." : "Sign in with Google"}
+          </button>
 
-          <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
+          <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
-            or
+            or continue with email
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {mode === "signup" && (
-              <div className="space-y-1.5">
-                <Label htmlFor="name" className="label">Full Name</Label>
-                <Input
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="name" className="label">
+                  Full Name
+                </label>
+                <input
                   id="name"
                   type="text"
                   autoComplete="name"
@@ -216,13 +220,15 @@ export default function SignInPage() {
               </div>
             )}
 
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="label">Email Address</Label>
-              <Input
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="email" className="label">
+                Email Address
+              </label>
+              <input
                 id="email"
                 type="email"
                 autoComplete="email"
-                placeholder="name@example.com"
+                placeholder="name@vitstudent.ac.in"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="field"
@@ -230,13 +236,15 @@ export default function SignInPage() {
               />
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="password" className="label">Password</Label>
-              <Input
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="password" className="label">
+                Password
+              </label>
+              <input
                 id="password"
                 type="password"
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                placeholder="Password"
+                placeholder="••••••••"
                 minLength={MIN_PASSWORD_LENGTH}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -250,12 +258,13 @@ export default function SignInPage() {
               )}
             </div>
 
-            <Button type="submit" disabled={isBusy} className="btn-primary w-full">
+            <button type="submit" disabled={isBusy} className="btn-primary mt-2 w-full">
+              {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
               {submitting ? "Processing..." : mode === "signin" ? "Sign In" : "Create Account"}
-            </Button>
+            </button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </main>
   );
 }

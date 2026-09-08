@@ -118,21 +118,25 @@ const DataTable = ({ data }) => {
       {
         Header: "Shortlisted",
         accessor: "shortlisted",
-        Cell: ({ row }) => (
-          <button
-            type="button"
-            onClick={() =>
-              handleShortlist(row.original._id, row.original.shortlisted)
-            }
-            className={`inline-flex w-[110px] items-center justify-center rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-              row.original.shortlisted
-                ? "bg-destructive/15 text-destructive hover:bg-destructive/25"
-                : "bg-primary/15 text-primary hover:bg-primary/25"
-            }`}
-          >
-            {row.original.shortlisted ? "Unshortlist" : "Shortlist"}
-          </button>
-        ),
+        Cell: ({ row }) => {
+          const isShortlisted = row.original.shortlisted;
+          const tone = isShortlisted ? "var(--g-green)" : "var(--g-blue)";
+          return (
+            <button
+              type="button"
+              onClick={() => handleShortlist(row.original._id, isShortlisted)}
+              className="inline-flex w-[118px] items-center justify-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-opacity hover:opacity-80"
+              style={{
+                backgroundColor: `${isShortlisted ? "rgb(52 168 83" : "rgb(66 133 244"} / 0.12)`,
+                borderColor: `${isShortlisted ? "rgb(52 168 83" : "rgb(66 133 244"} / 0.3)`,
+                color: tone,
+              }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone }} />
+              {isShortlisted ? "Shortlisted" : "Shortlist"}
+            </button>
+          );
+        },
       },
     ],
     [handleShortlist]
@@ -274,7 +278,14 @@ const DataTable = ({ data }) => {
   };
 
   return (
-    <div className="container-page flex flex-col gap-4 py-8">
+    <div className="container-page flex flex-col gap-5 py-10">
+      <div className="flex flex-col gap-1 border-b border-white/10 pb-6">
+        <span className="eyebrow">Admin Review</span>
+        <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
+          Applicant Pipeline
+        </h1>
+      </div>
+
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative min-w-[240px] flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -307,10 +318,19 @@ const DataTable = ({ data }) => {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-        <span>{tableData.length} records</span>
-        <span>{shortlistedCount} shortlisted</span>
-        <span>{selectedFlatRows.length} selected</span>
+      <div className="flex flex-wrap items-center gap-3 text-xs">
+        <span className="badge">
+          <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--g-blue)" }} />
+          {tableData.length} records
+        </span>
+        <span className="badge">
+          <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--g-green)" }} />
+          {shortlistedCount} shortlisted
+        </span>
+        <span className="badge">
+          <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--g-yellow)" }} />
+          {selectedFlatRows.length} selected
+        </span>
       </div>
 
       <div className="surface overflow-hidden">

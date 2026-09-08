@@ -54,11 +54,36 @@ module.exports = {
         validation: {
           light: "#FFCCCB", // Light red for validation messages
         },
+        // Tonal elevation tiers (Material 3 dark theme)
+        surface: {
+          base: "var(--surface-base)",
+          DEFAULT: "var(--surface)",
+          container: "var(--surface-container)",
+          high: "var(--surface-container-high)",
+          stroke: "var(--surface-stroke)",
+        },
+        // Google brand palette
+        g: {
+          blue: "var(--g-blue)",
+          red: "var(--g-red)",
+          yellow: "var(--g-yellow)",
+          green: "var(--g-green)",
+        },
+      },
+      fontFamily: {
+        sans: ["var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: [
+          "var(--font-display)",
+          "Product Sans",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "calc(var(--radius) - 4px)",
+        sm: "calc(var(--radius) - 8px)",
       },
       keyframes: {
         "shine-pulse": {
