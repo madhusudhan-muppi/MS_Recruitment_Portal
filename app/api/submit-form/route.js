@@ -19,14 +19,20 @@ export async function POST(req) {
     const user = session.user;
     const userEmail = user.email;
 
-    const deadline = new Date("2026-08-23T23:59:59+05:30");
-    if (new Date() > deadline)
-      return new Response(
-        JSON.stringify({
-          message: "The submission deadline has passed"
-        }),
-        { status: 403 }
-      );
+    const deadlineEnv = process.env.APPLICATION_DEADLINE;
+    if (deadlineEnv) {
+      const deadline = new Date(deadlineEnv);
+      if (isNaN(deadline.getTime())) {
+        console.warn("Invalid APPLICATION_DEADLINE environment variable:", deadlineEnv);
+      } else if (new Date() > deadline) {
+        return new Response(
+          JSON.stringify({
+            message: "The submission deadline has passed",
+          }),
+          { status: 403 }
+        );
+      }
+    }
                   
 
     const db = await connect();
