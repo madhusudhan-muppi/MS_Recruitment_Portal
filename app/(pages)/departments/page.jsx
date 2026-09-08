@@ -110,7 +110,7 @@ const DepartmentsListPage = () => {
     const isSubmitted = submittedDepartments.includes(department.name);
 
     return (
-      <li key={`${department.name}-${index}-${Math.random()}`} style={{ margin: "16px 0" }}>
+      <li key={department.id} style={{ margin: "16px 0" }}>
         <label>
           <input
             type="checkbox"

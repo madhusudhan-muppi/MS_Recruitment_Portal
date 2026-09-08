@@ -324,32 +324,44 @@ const DataTable = ({ data }) => {
       <div className="border rounded-md">
         <Table {...getTableProps()}>
           <TableHeader>
-            {headerGroups.map((hg) => (
-              <TableRow key={`${hg.id}-${Math.random()}`} {...hg.getHeaderGroupProps()}>
-                {hg.headers.map((header) => (
+            {headerGroups.map((hg) => {
+              const { key: hgKey, ...hgProps } = hg.getHeaderGroupProps();
+              return (
+              <TableRow key={hgKey} {...hgProps}>
+                {hg.headers.map((header) => {
+                  const { key: headerKey, ...headerProps } = header.getHeaderProps(
+                    header.getSortByToggleProps()
+                  );
+                  return (
                   <TableHead
-                    key={`${header.id}-${Math.random()}`}
-                    {...header.getHeaderProps(header.getSortByToggleProps())}
+                    key={headerKey}
+                    {...headerProps}
                   >
                     <div className="inline-flex gap-1 items-center">
                       {header.render("Header")}
                       <FaSortAmountDownAlt />
                     </div>
                   </TableHead>
-                ))}
+                  );
+                })}
               </TableRow>
-            ))}
+              );
+            })}
           </TableHeader>
           <TableBody {...getTableBodyProps()}>
             {page.map((row) => {
               prepareRow(row);
+              const { key: rowKey, ...rowProps } = row.getRowProps();
               return (
-                <TableRow key={`${row.id}-${Math.random()}`} {...row.getRowProps()}>
-                  {row.cells.map((cell) => (
-                    <TableCell key={`${cell.id}-${Math.random()}`} {...cell.getCellProps()}>
+                <TableRow key={rowKey} {...rowProps}>
+                  {row.cells.map((cell) => {
+                    const { key: cellKey, ...cellProps } = cell.getCellProps();
+                    return (
+                    <TableCell key={cellKey} {...cellProps}>
                       {cell.render("Cell")}
                     </TableCell>
-                  ))}
+                    );
+                  })}
                 </TableRow>
               );
             })}

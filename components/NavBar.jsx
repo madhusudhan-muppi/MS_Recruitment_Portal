@@ -23,20 +23,11 @@ const NavBar = () => {
   const { data: session, isPending, error } = authClient.useSession();
 
   // Track component-level state for navigation and display
-  const [formattedTimeDisplay, setFormattedTimeDisplay] = useState("");
   const [userSessionEmail, setUserSessionEmail] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [hasAdminPermissions, setHasAdminPermissions] = useState(false);
   const [navigationRouteList, setNavigationRouteList] = useState([]);
   const [scrollElevation, setScrollElevation] = useState(0);
-
-  // Keep live time synchronized for the banner clock
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setFormattedTimeDisplay(new Date().toLocaleTimeString());
-    }, 200);
-    return () => clearInterval(timer);
-  }, []);
 
   // Update header elevation based on scroll offset
   useEffect(() => {
@@ -87,9 +78,6 @@ const NavBar = () => {
           <Link href="/">
             <strong>Recruitment Portal</strong>
           </Link>
-          <span style={{ fontSize: "10px", color: "gray", marginLeft: "10px" }}>
-            {formattedTimeDisplay}
-          </span>
         </div>
         <div>
           {navigationRouteList.map((item, idx) => (
