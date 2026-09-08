@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
-    "@material-symbols-svg/react": "^0.13.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.1",

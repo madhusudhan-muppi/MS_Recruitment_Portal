@@ -15,7 +15,7 @@ import { GrPowerReset } from "react-icons/gr";
 import { Button } from "./ui/button";
 import { CheckBoxComp } from "./CheckBoxComp";
 import { toast } from "sonner";
-import { curDate, curDay, curMonth, curYear, months, days } from "@/constants";
+import { curDate, curMonth, curYear, months } from "@/constants";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import {
   useTable,
