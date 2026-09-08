@@ -1,6 +1,21 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
+const TimeUnit = ({ value, label }) => (
+  <div className="flex flex-col items-center">
+    <div className="relative">
+      <div className=" ">
+        <div className="font-bold text-white tracking-wider">
+          {value.toString().padStart(2, "0")}
+        </div>
+      </div>
+    </div>
+    <div className="text-gray-400 text-[10px] uppercase tracking-wide">
+      {label}
+    </div>
+  </div>
+);
+
 const CountdownTimer = ({ targetDate = "2026-08-23T23:59:59+05:30", className = "" }) => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -37,21 +52,6 @@ const CountdownTimer = ({ targetDate = "2026-08-23T23:59:59+05:30", className = 
 
     return () => clearInterval(timer);
   }, [targetDate]);
-
-  const TimeUnit = ({ value, label }) => (
-    <div className="flex flex-col items-center">
-      <div className="relative">
-        <div className=" ">
-          <div className="font-bold text-white tracking-wider">
-            {value.toString().padStart(2, "0")}
-          </div>
-        </div>
-      </div>
-      <div className="text-gray-400 text-[10px] uppercase tracking-wide">
-        {label}
-      </div>
-    </div>
-  );
 
   return (
     <div className={`flex flex-col items-center justify-center ${className}`}>

@@ -1,5 +1,5 @@
 "use client";
-import { React, useState, useEffect, useMemo } from "react";
+import { React, useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -50,29 +50,29 @@ const DataTable = ({ data }) => {
     return common;
   };
 
+  const reconcileFilters = (nextDeptFiltered, nextShortFiltered) => {
+    if (nextDeptFiltered !== data && nextShortFiltered !== data) {
+      setTableData(commonElements(nextDeptFiltered, nextShortFiltered));
+    } else if (nextDeptFiltered !== data && nextShortFiltered === data) {
+      setTableData(nextDeptFiltered);
+    } else if (nextDeptFiltered === data && nextShortFiltered !== data) {
+      setTableData(nextShortFiltered);
+    } else {
+      setTableData(data);
+    }
+  };
+
   const filterFunc = (dept) => {
-    setDeptFiltered(data);
     const filteredData = data.filter((d) => d.Department === dept);
     setDeptFiltered(filteredData);
+    reconcileFilters(filteredData, shortFiltered);
   };
 
   const shortlistedFilterFunc = (status) => {
     const filteredData = data.filter((d) => String(d.shortlisted) === status);
     setShortFiltered(filteredData);
+    reconcileFilters(deptFiltered, filteredData);
   };
-
-  // Pipeline Step 1: Filter reconciliation
-  useEffect(() => {
-    if (deptFiltered !== data && shortFiltered !== data) {
-      setTableData(commonElements(deptFiltered, shortFiltered));
-    } else if (deptFiltered !== data && shortFiltered === data) {
-      setTableData(deptFiltered);
-    } else if (deptFiltered === data && shortFiltered !== data) {
-      setTableData(shortFiltered);
-    } else {
-      setTableData(data);
-    }
-  }, [deptFiltered, shortFiltered]);
 
   const handleShortlist = async (id, isShortlisted) => {
     console.log(

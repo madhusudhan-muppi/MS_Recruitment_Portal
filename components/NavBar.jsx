@@ -22,11 +22,7 @@ const NavBar = () => {
   // Use Better Auth's useSession hook directly
   const { data: session, isPending, error } = authClient.useSession();
 
-  // Track component-level state for navigation and display
-  const [userSessionEmail, setUserSessionEmail] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [hasAdminPermissions, setHasAdminPermissions] = useState(false);
-  const [navigationRouteList, setNavigationRouteList] = useState([]);
+  // Track header elevation as the only value that genuinely needs a listener
   const [scrollElevation, setScrollElevation] = useState(0);
 
   // Update header elevation based on scroll offset
@@ -38,35 +34,16 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", handleWindowScroll);
   }, []);
 
-  // Sync user email from current session
-  useEffect(() => {
-    if (session?.user?.email) {
-      setUserSessionEmail(session.user.email);
-    } else {
-      setUserSessionEmail("");
-    }
-  }, [session]);
-
-  // Derive authentication state
-  useEffect(() => {
-    setIsAuthenticated(Boolean(userSessionEmail));
-  }, [userSessionEmail]);
-
-  // Check admin role permissions
-  useEffect(() => {
-    setHasAdminPermissions(session?.user?.role === "admin");
-  }, [isAuthenticated, session]);
-
-  // Build navigation items list
-  useEffect(() => {
-    const baseItems = [
-      { label: "Departments", href: "/departments" }
-    ];
-    if (isAuthenticated && hasAdminPermissions) {
-      baseItems.push({ label: "Admin Panel", href: "/admin" });
-    }
-    setNavigationRouteList(baseItems);
-  }, [isAuthenticated, hasAdminPermissions]);
+  // Derive everything else from session during render
+  const userSessionEmail = session?.user?.email || "";
+  const isAuthenticated = Boolean(userSessionEmail);
+  const hasAdminPermissions = session?.user?.role === "admin";
+  const navigationRouteList = [
+    { label: "Departments", href: "/departments" },
+    ...(isAuthenticated && hasAdminPermissions
+      ? [{ label: "Admin Panel", href: "/admin" }]
+      : []),
+  ];
 
   // Prepare user profile payload snapshot
   const activeUserDataSnapshot = session?.user ? JSON.parse(JSON.stringify(session.user)) : null;
