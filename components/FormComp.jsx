@@ -128,6 +128,7 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
         /^\d{2}[A-Z]{3}\d{4}$/,
         "Registration number must be 2 numbers, 3 uppercase letters, and 4 numbers (e.g. 25BCE5612)"
       ),
+    Gender: z.string().optional(),
     Email: z.string(),
     Phone: z
       .string()
@@ -146,8 +147,10 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
     defaultValues: {
       Name: "",
       RegistrationNumber: "",
+      Gender: "",
       Email: "",
       Phone: "",
+      "Year of Study": "",
     },
   });
 
@@ -270,6 +273,7 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
     const basicDetails = {
       Name: values.Name,
       RegistrationNumber: values.RegistrationNumber,
+      Gender: values.Gender,
       Email: values.Email,
       Phone: values.Phone,
       "Year of Study": values["Year of Study"],
@@ -410,6 +414,20 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
                         <option value="Other">Other</option>
                         <option value="Prefer not to say">Prefer not to say</option>
                       </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="Year of Study"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Year of Study</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g. 1st Year / 2nd Year" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
