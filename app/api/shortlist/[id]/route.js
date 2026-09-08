@@ -6,29 +6,46 @@ export async function PATCH(req, { params }) {
     const { response } = await requireAdmin();
     if (response) return response;
 
-    const db = await connect();
-
     const { id } = params;
-    const { shortlisted } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const { shortlisted } = body;
+
+    if (typeof shortlisted !== 'boolean') {
+        return NextResponse.json(
+            { success: false, message: 'shortlisted must be a boolean' },
+            { status: 400 }
+        );
+    }
 
     try {
+        const db = await connect();
         const docRef = db.collection('formData').doc(id);
-        await docRef.update({ shortlisted });
-        const snapshot = await docRef.get();
 
+        const snapshot = await docRef.get();
         if (!snapshot.exists) {
-            return NextResponse.json({ success: false, message: 'Applicant not found' }, { status: 404 });
+            return NextResponse.json(
+                { success: false, message: 'Applicant not found' },
+                { status: 404 }
+            );
         }
+
+        await docRef.update({ shortlisted });
 
         const applicant = {
             id: snapshot.id,
             _id: snapshot.id,
-            ...serializeFirestoreData(snapshot.data()),
+            ...serializeFirestoreData({
+                ...snapshot.data(),
+                shortlisted,
+            }),
         };
 
         return NextResponse.json({ success: true, data: applicant });
     } catch (error) {
-        console.error('Error updating applicant:', error.message);
-        return NextResponse.json({ success: false, message: error.message }, { status: 400 });
+        console.error('Error updating applicant:', error);
+        return NextResponse.json(
+            { success: false, message: 'Failed to update applicant' },
+            { status: 500 }
+        );
     }
 }
