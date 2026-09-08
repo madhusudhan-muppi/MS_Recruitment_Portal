@@ -37,9 +37,8 @@ frameworks.push({
     label: "Video Editing",
 });
 
-export default function FilterDepartment({ filterFunc }) {
+export default function FilterDepartment({ value, onChange }) {
     const [open, setOpen] = React.useState(false);
-    const [value, setValue] = React.useState("");
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -73,14 +72,13 @@ export default function FilterDepartment({ filterFunc }) {
                                 <CommandItem
                                     key={framework.value}
                                     value={framework.value}
-                                    onSelect={(currentValue) => {
-                                        setValue(
-                                            currentValue === value
+                                    onSelect={() => {
+                                        onChange(
+                                            framework.value === value
                                                 ? ""
-                                                : currentValue
+                                                : framework.value
                                         );
                                         setOpen(false);
-                                        filterFunc(currentValue);
                                     }}
                                 >
                                     <Check

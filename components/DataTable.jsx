@@ -1,5 +1,5 @@
 "use client";
-import { React, useState, useMemo } from "react";
+import { React, useState, useMemo, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -33,48 +33,21 @@ import { CSVLink } from "react-csv";
 import { CSV_Header } from "@/constants";
 
 const DataTable = ({ data }) => {
-  const [tableData, setTableData] = useState(data);
+  const [rows, setRows] = useState(data);
+  const [departmentFilter, setDepartmentFilter] = useState("");
+  const [shortlistedFilter, setShortlistedFilter] = useState("");
 
-  const [deptFiltered, setDeptFiltered] = useState(data);
-  const [shortFiltered, setShortFiltered] = useState(data);
+  const tableData = useMemo(
+    () =>
+      rows.filter(
+        (row) =>
+          (!departmentFilter || row.Department === departmentFilter) &&
+          (!shortlistedFilter || String(row.shortlisted) === shortlistedFilter)
+      ),
+    [rows, departmentFilter, shortlistedFilter]
+  );
 
-  const commonElements = (arr1, arr2) => {
-    let common = [];
-    arr1.map((elt1) => {
-      arr2.map((elt2) => {
-        if (elt1 === elt2) {
-          common.push(elt1);
-        }
-      });
-    });
-    return common;
-  };
-
-  const reconcileFilters = (nextDeptFiltered, nextShortFiltered) => {
-    if (nextDeptFiltered !== data && nextShortFiltered !== data) {
-      setTableData(commonElements(nextDeptFiltered, nextShortFiltered));
-    } else if (nextDeptFiltered !== data && nextShortFiltered === data) {
-      setTableData(nextDeptFiltered);
-    } else if (nextDeptFiltered === data && nextShortFiltered !== data) {
-      setTableData(nextShortFiltered);
-    } else {
-      setTableData(data);
-    }
-  };
-
-  const filterFunc = (dept) => {
-    const filteredData = data.filter((d) => d.Department === dept);
-    setDeptFiltered(filteredData);
-    reconcileFilters(filteredData, shortFiltered);
-  };
-
-  const shortlistedFilterFunc = (status) => {
-    const filteredData = data.filter((d) => String(d.shortlisted) === status);
-    setShortFiltered(filteredData);
-    reconcileFilters(deptFiltered, filteredData);
-  };
-
-  const handleShortlist = async (id, isShortlisted) => {
+  const handleShortlist = useCallback(async (id, isShortlisted) => {
     console.log(
       `Shortlist button pressed for ID: ${id}, current status: ${isShortlisted}`
     );
@@ -87,16 +60,13 @@ const DataTable = ({ data }) => {
       });
 
       if (res.ok) {
-        const updatedData = tableData.map((applicant) => {
-          if (applicant._id === id) {
-            console.log(
-              `Updating applicant with ID: ${id} to shortlisted status: ${!isShortlisted}`
-            );
-            return { ...applicant, shortlisted: !isShortlisted }; // Update in local state
-          }
-          return applicant;
-        });
-        setTableData(updatedData);
+        setRows((prev) =>
+          prev.map((applicant) =>
+            applicant._id === id
+              ? { ...applicant, shortlisted: !isShortlisted }
+              : applicant
+          )
+        );
         toast.success("Student status updated!");
       } else {
         console.error("Failed to update applicant status.");
@@ -106,7 +76,7 @@ const DataTable = ({ data }) => {
       console.error("Error occurred while updating the status:", error.message);
       toast.error("Failed to update status");
     }
-  };
+  }, []);
 
   const columns = useMemo(
     () => [
@@ -157,7 +127,7 @@ const DataTable = ({ data }) => {
         ),
       },
     ],
-    [tableData]
+    [handleShortlist]
   );
 
   const {
@@ -206,6 +176,8 @@ const DataTable = ({ data }) => {
 
   const { globalFilter, pageIndex } = state;
 
+  const [pageSizeInputKey, setPageSizeInputKey] = useState(0);
+
   const handlePageSize = (e) => {
     const sz = Number(e.target.value);
     if (sz) {
@@ -213,6 +185,15 @@ const DataTable = ({ data }) => {
     } else {
       setPageSize(10);
     }
+  };
+
+  const handleResetFilters = () => {
+    setDepartmentFilter("");
+    setShortlistedFilter("");
+    setGlobalFilter(undefined);
+    setPageSize(10);
+    gotoPage(0);
+    setPageSizeInputKey((key) => key + 1);
   };
 
   const handleRowSelection = async (payloadData) => {
@@ -299,14 +280,15 @@ const DataTable = ({ data }) => {
           className="min-w-[300px]"
         />
         <Input
+          key={pageSizeInputKey}
           className="w-fit"
           onChange={(e) => handlePageSize(e)}
           placeholder={"Page Size"}
         />
-        <FilterDepartment filterFunc={filterFunc} />
-        <FilterShortlisted filterFunc={shortlistedFilterFunc} />
+        <FilterDepartment value={departmentFilter} onChange={setDepartmentFilter} />
+        <FilterShortlisted value={shortlistedFilter} onChange={setShortlistedFilter} />
         <DialogComp selectedApplicants={showRowData} />
-        <Button onClick={() => window.location.reload()} className="flex gap-2">
+        <Button onClick={handleResetFilters} className="flex gap-2">
           <GrPowerReset />
           Reset Filters
         </Button>

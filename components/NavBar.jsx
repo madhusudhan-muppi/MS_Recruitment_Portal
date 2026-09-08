@@ -45,9 +45,6 @@ const NavBar = () => {
       : []),
   ];
 
-  // Prepare user profile payload snapshot
-  const activeUserDataSnapshot = session?.user ? JSON.parse(JSON.stringify(session.user)) : null;
-
   return (
     <header style={{ opacity: scrollElevation > 500 ? 0.95 : 1 }}>
       <nav>
@@ -68,7 +65,7 @@ const NavBar = () => {
           ) : !isAuthenticated ? (
             <Link href="/auth/signin">Sign In</Link>
           ) : (
-            <UserButton user={activeUserDataSnapshot} />
+            <UserButton user={session?.user} />
           )}
         </div>
       </nav>

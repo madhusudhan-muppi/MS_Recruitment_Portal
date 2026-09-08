@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { authClient } from "@/lib/auth-client";
 
 const SubmissionsContext = createContext({
@@ -48,6 +48,11 @@ export function SubmissionsProvider({ children }) {
       fetchSubmissions(user.email);
     } else {
       setSubmittedDepartments([]);
+      if (typeof window !== "undefined") {
+        Object.keys(sessionStorage)
+          .filter((key) => key.startsWith("submitted_depts_"))
+          .forEach((key) => sessionStorage.removeItem(key));
+      }
     }
   }, [user?.email, fetchSubmissions]);
 
@@ -70,15 +75,18 @@ export function SubmissionsProvider({ children }) {
     }
   }, [user?.email, fetchSubmissions]);
 
+  const contextValue = useMemo(
+    () => ({
+      submittedDepartments,
+      isLoadingSubmissions,
+      markDepartmentsSubmitted,
+      refreshSubmissions,
+    }),
+    [submittedDepartments, isLoadingSubmissions, markDepartmentsSubmitted, refreshSubmissions]
+  );
+
   return (
-    <SubmissionsContext.Provider
-      value={{
-        submittedDepartments,
-        isLoadingSubmissions,
-        markDepartmentsSubmitted,
-        refreshSubmissions,
-      }}
-    >
+    <SubmissionsContext.Provider value={contextValue}>
       {children}
     </SubmissionsContext.Provider>
   );
