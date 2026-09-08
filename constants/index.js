@@ -26,6 +26,40 @@ export const MAX_APPLICATIONS = 2;
 export const ORG_DISCLAIMER =
   "Google Developer Groups on Campus is an independent, student-led community backed by Google Developers. Student organizers operate voluntarily, and chapter activities are not formally operated by Google LLC.";
 
+// Contact / social links. `icon` maps to a key in components/ContactLinks.jsx.
+export const CONTACT_LINKS = [
+  {
+    name: "Email",
+    label: "gdgvitc@gmail.com",
+    href: "mailto:gdgvitc@gmail.com",
+    icon: "email",
+  },
+  {
+    name: "Instagram",
+    label: "@gdg.vitc",
+    href: "https://www.instagram.com/gdg.vitc/",
+    icon: "instagram",
+  },
+  {
+    name: "LinkedIn",
+    label: "GDG VIT Chennai",
+    href: "https://www.linkedin.com/company/gdg-vitc/",
+    icon: "linkedin",
+  },
+  {
+    name: "Discord",
+    label: "Join the server",
+    href: "https://discord.gg/67G6bg4Xeq",
+    icon: "discord",
+  },
+  {
+    name: "X",
+    label: "@gdg_vitc",
+    href: "https://x.com/gdg_vitc",
+    icon: "x",
+  },
+];
+
 // Department Details
 export const reviews = [
   {

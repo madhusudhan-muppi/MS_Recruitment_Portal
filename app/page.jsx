@@ -7,6 +7,7 @@ import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
 import ValueProps from "@/components/ValueProps";
 import ProcessTimeline from "@/components/ProcessTimeline";
+import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import PopupComp from "@/components/PopupComp";
 import { authClient } from "@/lib/auth-client";
@@ -63,6 +64,7 @@ const Home = () => {
       </div>
       <ValueProps />
       <ProcessTimeline />
+      <ContactSection />
       <div className="mt-auto">
         <Footer />
       </div>

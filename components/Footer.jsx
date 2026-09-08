@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Logo from "./Logo";
+import ContactLinks from "./ContactLinks";
 import { ORG_LONG_NAME, ORG_DISCLAIMER, DEVELOPMENT_DEPARTMENT_NAMES } from "@/constants";
 
 const recruitmentLinks = [
@@ -33,6 +34,9 @@ const Footer = () => {
           <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
             {ORG_DISCLAIMER}
           </p>
+
+          <ContactLinks variant="row" />
+
           <span className="mt-2 text-xs text-muted-foreground/60">
             &copy; {currentYear} {ORG_LONG_NAME}. All rights reserved.
           </span>
