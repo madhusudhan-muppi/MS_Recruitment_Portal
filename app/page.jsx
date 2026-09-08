@@ -40,7 +40,7 @@ const Home = () => {
   };
 
   return (
-    <main>
+    <main className="flex min-h-screen flex-col">
       <NavBar />
       {!isPending && !user && (
         <NoticeDialogContainer
@@ -49,7 +49,9 @@ const Home = () => {
         />
       )}
       <Hero />
-      <Footer />
+      <div className="mt-auto">
+        <Footer />
+      </div>
     </main>
   );
 };

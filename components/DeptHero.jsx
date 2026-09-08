@@ -1,29 +1,16 @@
-"use client";
+import React from "react";
 
-import React, { useEffect } from "react";
-import { Switch } from "@/components/ui/switch";
-
-const DeptHero = ({ dept, setPhotoQs, photoQs, isLoading, setIsLoading }) => {
-  useEffect(() => {
-    setIsLoading(false);
-  }, [setIsLoading]);
+const DeptHero = ({ dept }) => {
   return (
-    <section>
-      <h1>{!photoQs ? dept.name : "Video Editing"}</h1>
-      {dept.body && <p>{dept.body}</p>}
-      {dept.name === "Photography" && (
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              checked={photoQs}
-              onChange={() => setPhotoQs(!photoQs)}
-            />
-            {" "}Switch to Video Editing?
-          </label>
-        </div>
-      )}
-      <hr />
+    <section className="hero-glow border-b border-border">
+      <div className="container-page py-16 text-center">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          {dept.name}
+        </h1>
+        {dept.description && (
+          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">{dept.description}</p>
+        )}
+      </div>
     </section>
   );
 };

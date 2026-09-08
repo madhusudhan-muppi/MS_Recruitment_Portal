@@ -3,12 +3,12 @@
 // React import
 import React from "react";
 // Component import
-import DWASFWLoader from "@/components/GDGLoader";
+import GDGLoader from "@/components/GDGLoader";
 
 const loading = () => {
   return (
-    <div>
-      <DWASFWLoader />
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <GDGLoader />
     </div>
   );
 };

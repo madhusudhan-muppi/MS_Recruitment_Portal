@@ -75,9 +75,8 @@ export default function MailComposer({ recipients, handleRowSelection }) {
             }),
         ],
         content: "",
-        onUpdate: () => {
-            setPayloadData( (prev) => ({ ...payloadData, body: editor.getHTML() }));
-            
+        onUpdate: ({ editor: updatedEditor }) => {
+            setPayloadData((prev) => ({ ...prev, body: updatedEditor.getHTML() }));
         },
         editorProps: {
             attributes: {
@@ -110,10 +109,10 @@ export default function MailComposer({ recipients, handleRowSelection }) {
                                     className="max-w-[73vw]"
                                     placeholder="Subject"
                                     onChange={(e) =>
-                                        setPayloadData({
-                                            ...payloadData,
+                                        setPayloadData((prev) => ({
+                                            ...prev,
                                             subject: e.target.value,
-                                        })
+                                        }))
                                     }
                                 />
                                 {/* Select Template */}
@@ -124,10 +123,10 @@ export default function MailComposer({ recipients, handleRowSelection }) {
                                                 editor.commands.setContent("");
                                                 break;
                                             case "Interview Invite":
-                                                setPayloadData({
-                                                    ...payloadData,
+                                                setPayloadData((prev) => ({
+                                                    ...prev,
                                                     mailType: value,
-                                                });
+                                                }));
                                                 editor.commands.setContent(
                                                     mailingTemplate.Interview
                                                 );
@@ -474,10 +473,8 @@ export default function MailComposer({ recipients, handleRowSelection }) {
                         </DialogFooter>
                     </div>
                 ) : (
-                    <p>
-                        <p className="flex gap-3 items-center justify-start font-light text-md text-red-500">
-                            <CiWarning /> No recipients selected
-                        </p>
+                    <p className="flex gap-3 items-center justify-start font-light text-md text-red-500">
+                        <CiWarning /> No recipients selected
                     </p>
                 )}
             </DialogContent>

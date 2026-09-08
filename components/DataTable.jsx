@@ -12,10 +12,11 @@ import FilterDepartment from "./FilterDepartment";
 import FilterShortlisted from "./FilterShortlisted";
 import { FaSortAmountDownAlt } from "react-icons/fa";
 import { GrPowerReset } from "react-icons/gr";
+import { Search } from "lucide-react";
 import { Button } from "./ui/button";
 import { CheckBoxComp } from "./CheckBoxComp";
 import { toast } from "sonner";
-import { curDate, curMonth, curYear, months } from "@/constants";
+import { CSV_Header } from "@/constants";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import {
   useTable,
@@ -30,7 +31,6 @@ import PaginationComp from "./PaginationComp";
 import DialogComp from "./DialogComp";
 import MailComposer from "./MailComposer";
 import { CSVLink } from "react-csv";
-import { CSV_Header } from "@/constants";
 
 const DataTable = ({ data }) => {
   const [rows, setRows] = useState(data);
@@ -47,11 +47,12 @@ const DataTable = ({ data }) => {
     [rows, departmentFilter, shortlistedFilter]
   );
 
-  const handleShortlist = useCallback(async (id, isShortlisted) => {
-    console.log(
-      `Shortlist button pressed for ID: ${id}, current status: ${isShortlisted}`
-    );
+  const shortlistedCount = useMemo(
+    () => tableData.filter((row) => row.shortlisted).length,
+    [tableData]
+  );
 
+  const handleShortlist = useCallback(async (id, isShortlisted) => {
     try {
       const res = await fetch(`/api/shortlist/${id}`, {
         method: "PATCH",
@@ -83,13 +84,14 @@ const DataTable = ({ data }) => {
       {
         Header: "Sr No",
         accessor: (row, index) => index + 1,
+        id: "srNo",
       },
       {
         Header: "Name",
         accessor: "Name",
       },
       {
-        Header: "RegistrationNumber",
+        Header: "Registration Number",
         accessor: "RegistrationNumber",
       },
       {
@@ -105,21 +107,27 @@ const DataTable = ({ data }) => {
         accessor: "Department",
       },
       {
-        Header: "Preference",
-        accessor: "Pref",
+        Header: "Gender",
+        accessor: "Gender",
+      },
+      {
+        Header: "Year",
+        accessor: "Year of Study",
+        id: "yearOfStudy",
       },
       {
         Header: "Shortlisted",
         accessor: "shortlisted",
         Cell: ({ row }) => (
           <button
+            type="button"
             onClick={() =>
               handleShortlist(row.original._id, row.original.shortlisted)
             }
-            className={`px-4 py-2 rounded w-[115px] ${
+            className={`inline-flex w-[110px] items-center justify-center rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
               row.original.shortlisted
-                ? "bg-red-600 text-white"
-                : "bg-green-600 text-white"
+                ? "bg-destructive/15 text-destructive hover:bg-destructive/25"
+                : "bg-primary/15 text-primary hover:bg-primary/25"
             }`}
           >
             {row.original.shortlisted ? "Unshortlist" : "Shortlist"}
@@ -161,6 +169,8 @@ const DataTable = ({ data }) => {
       hooks.visibleColumns.push((columns) => {
         return [
           {
+            id: "selection",
+            disableSortBy: true,
             Header: ({ getToggleAllRowsSelectedProps }) => (
               <CheckBoxComp {...getToggleAllRowsSelectedProps()} />
             ),
@@ -204,7 +214,6 @@ const DataTable = ({ data }) => {
     };
 
     try {
-      // const response = await MailSender(request);
       const response = await fetch("/api/send-email", {
         method: "POST",
         headers: {
@@ -214,19 +223,13 @@ const DataTable = ({ data }) => {
       });
 
       if (response.ok) {
-        toast("Invite has been sent!", {
-          description: `On ${months[curMonth - 1]} ${curDate}, ${curYear}`,
-        });
+        toast.success("Invite has been sent!");
       } else {
-        toast("Failed to send invite", {
-          description: "Please try again later.",
-        });
+        toast.error("Failed to send invite. Please try again later.");
       }
     } catch (error) {
       console.error("Error sending emails:", error);
-      toast("Failed to send invite", {
-        description: "Please try again later.",
-      });
+      toast.error("Failed to send invite. Please try again later.");
     }
   };
 
@@ -271,82 +274,99 @@ const DataTable = ({ data }) => {
   };
 
   return (
-    <div className="bg-[#121212] flex flex-col gap-3 p-3 mt-5">
-      <div className="flex items-start border-none justify-start gap-3 p-1 overflow-x-scroll">
-        <Input
-          value={globalFilter || ""}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Filter Data"
-          className="min-w-[300px]"
-        />
+    <div className="container-page flex flex-col gap-4 py-8">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative min-w-[240px] flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={globalFilter || ""}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Search applicants..."
+            className="field pl-9"
+          />
+        </div>
         <Input
           key={pageSizeInputKey}
-          className="w-fit"
+          className="field w-28"
           onChange={(e) => handlePageSize(e)}
-          placeholder={"Page Size"}
+          placeholder="Rows / page"
         />
         <FilterDepartment value={departmentFilter} onChange={setDepartmentFilter} />
         <FilterShortlisted value={shortlistedFilter} onChange={setShortlistedFilter} />
         <DialogComp selectedApplicants={showRowData} />
-        <Button onClick={handleResetFilters} className="flex gap-2">
+        <MailComposer recipients={selectedFlatRows.length} handleRowSelection={handleRowSelection} />
+        <Button onClick={handleResetFilters} variant="outline" className="btn-secondary gap-2">
           <GrPowerReset />
           Reset Filters
         </Button>
-        <Button>
-          <CSVLink
-            {...csv_link}
-            className="flex gap-2 justify-center items-center"
-          >
+        <Button className="btn-primary gap-2" asChild>
+          <CSVLink {...csv_link}>
             <IoCloudDownloadOutline />
             Download CSV
           </CSVLink>
         </Button>
       </div>
 
-      <div className="border rounded-md">
+      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+        <span>{tableData.length} records</span>
+        <span>{shortlistedCount} shortlisted</span>
+        <span>{selectedFlatRows.length} selected</span>
+      </div>
+
+      <div className="surface overflow-hidden">
         <Table {...getTableProps()}>
           <TableHeader>
             {headerGroups.map((hg) => {
               const { key: hgKey, ...hgProps } = hg.getHeaderGroupProps();
               return (
-              <TableRow key={hgKey} {...hgProps}>
-                {hg.headers.map((header) => {
-                  const { key: headerKey, ...headerProps } = header.getHeaderProps(
-                    header.getSortByToggleProps()
-                  );
-                  return (
-                  <TableHead
-                    key={headerKey}
-                    {...headerProps}
-                  >
-                    <div className="inline-flex gap-1 items-center">
-                      {header.render("Header")}
-                      <FaSortAmountDownAlt />
-                    </div>
-                  </TableHead>
-                  );
-                })}
-              </TableRow>
-              );
-            })}
-          </TableHeader>
-          <TableBody {...getTableBodyProps()}>
-            {page.map((row) => {
-              prepareRow(row);
-              const { key: rowKey, ...rowProps } = row.getRowProps();
-              return (
-                <TableRow key={rowKey} {...rowProps}>
-                  {row.cells.map((cell) => {
-                    const { key: cellKey, ...cellProps } = cell.getCellProps();
+                <TableRow key={hgKey} {...hgProps} className="hover:bg-transparent">
+                  {hg.headers.map((header) => {
+                    const sortProps = header.canSort
+                      ? header.getSortByToggleProps()
+                      : {};
+                    const { key: headerKey, ...headerProps } = header.getHeaderProps(sortProps);
                     return (
-                    <TableCell key={cellKey} {...cellProps}>
-                      {cell.render("Cell")}
-                    </TableCell>
+                      <TableHead
+                        key={headerKey}
+                        {...headerProps}
+                        className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                      >
+                        <div className="inline-flex items-center gap-1">
+                          {header.render("Header")}
+                          {header.canSort && <FaSortAmountDownAlt className="h-3 w-3" />}
+                        </div>
+                      </TableHead>
                     );
                   })}
                 </TableRow>
               );
             })}
+          </TableHeader>
+          <TableBody {...getTableBodyProps()}>
+            {page.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={columns.length + 1} className="py-10 text-center text-sm text-muted-foreground">
+                  No applicants match these filters.
+                </TableCell>
+              </TableRow>
+            ) : (
+              page.map((row) => {
+                prepareRow(row);
+                const { key: rowKey, ...rowProps } = row.getRowProps();
+                return (
+                  <TableRow key={rowKey} {...rowProps}>
+                    {row.cells.map((cell) => {
+                      const { key: cellKey, ...cellProps } = cell.getCellProps();
+                      return (
+                        <TableCell key={cellKey} {...cellProps}>
+                          {cell.render("Cell")}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
       </div>

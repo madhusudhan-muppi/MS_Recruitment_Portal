@@ -1,14 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { useRouter, notFound } from "next/navigation";
 import { reviews } from "@/constants/index";
 import NavBar from "@/components/NavBar";
 import FormComp from "@/components/FormComp";
 import Footer from "@/components/Footer";
+import GDGLoader from "@/components/GDGLoader";
 import { authClient } from "@/lib/auth-client";
 
 const JoinDepartmentPage = ({ params }) => {
-  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   // Use Better Auth's useSession hook directly
@@ -41,9 +41,7 @@ const JoinDepartmentPage = ({ params }) => {
     return (
       <main>
         <NavBar />
-        <div>
-          <p>Loading...</p>
-        </div>
+        <GDGLoader />
         <Footer />
       </main>
     );
@@ -52,24 +50,25 @@ const JoinDepartmentPage = ({ params }) => {
   return (
     <main>
       <NavBar />
-      <div>
-        {isSignedIn ? (
-          <FormComp
-            dept1={departments[0]}
-            dept2={departments[1]}
-            isLoading={isLoading}
-            setIsLoading={setIsLoading}
-          />
-        ) : (
-          <section>
-            <h2>Authentication Required</h2>
-            <p>Please sign in to access the application form.</p>
-            <button type="button" onClick={() => router.push("/auth/signin")}>
+      {isSignedIn ? (
+        <FormComp dept1={departments[0]} dept2={departments[1]} />
+      ) : (
+        <div className="container-page flex min-h-[60vh] items-center justify-center">
+          <div className="surface max-w-sm p-8 text-center">
+            <h2 className="text-xl font-semibold text-foreground">Authentication Required</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Please sign in to access the application form.
+            </p>
+            <button
+              type="button"
+              onClick={() => router.push("/auth/signin")}
+              className="btn-primary mt-6 w-full"
+            >
               Sign In
             </button>
-          </section>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </main>
   );

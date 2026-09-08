@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useMemo, useState } from "react";
 import * as z from "zod";
 import { useForm, useWatch } from "react-hook-form";
@@ -13,78 +14,72 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { ChevronDown, Clock, Megaphone, UsersRound, X } from "lucide-react";
-import { QuestionnaireData } from "@/constants";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { AlertCircle, Loader2 } from "lucide-react";
+import { QuestionnaireData, ORG_NAME } from "@/constants";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import CountdownTimer from "./common/CountdownTimer";
 import { useSubmissions } from "@/components/SubmissionsProvider";
 
-const normaliseQuestion = (question) => (
+const GENERAL_QUESTION_NAME = `Why do you want to join ${ORG_NAME}?`;
+const GENDER_OPTIONS = ["Male", "Female", "Other", "Prefer not to say"];
+const YEAR_OPTIONS = ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year"];
+
+const normaliseQuestion = (question) =>
   typeof question === "string"
     ? { name: question, type: "generic", placeholder: "2-3 sentences" }
-    : question
-);
+    : question;
 
-const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
+const normalizeDeptName = (str) =>
+  str ? str.trim().toLowerCase().replace(/\s*\/\s*/g, "/") : "";
+
+// Single source of truth for "which questions belong to this department" —
+// used by both the schema builder and the submit handler so they can never disagree.
+const questionsForDepartment = (department) =>
+  (
+    QuestionnaireData.find(
+      (item) => normalizeDeptName(item.department) === normalizeDeptName(department)
+    )?.questions ?? []
+  ).map(normaliseQuestion);
+
+const FormComp = ({ dept1, dept2 }) => {
   // Use Better Auth's useSession hook directly
-  const { data: session, isPending, error } = authClient.useSession();
-  
+  const { data: session, isPending } = authClient.useSession();
+
   const user = session?.user;
   const isSignedIn = !!user;
   const isLoaded = !isPending;
 
-  // Form lifecycle state
-  const [isFormOpen, setIsFormOpen] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
   const { submittedDepartments: contextSubmitted, markDepartmentsSubmitted } = useSubmissions();
   const [submittedDepartments, setSubmittedDepartments] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [isDraftReady, setIsDraftReady] = useState(false);
+
+  const departmentObjects = useMemo(() => [dept1, dept2].filter(Boolean), [dept1, dept2]);
   const departmentNames = useMemo(
-    () => [dept1, dept2].filter(Boolean).map((department) => typeof department === "string" ? department : department.name),
-    [dept1, dept2]
+    () =>
+      departmentObjects.map((department) =>
+        typeof department === "string" ? department : department.name
+      ),
+    [departmentObjects]
   );
   const draftKey = user?.email && departmentNames.length
     ? `recruitment-draft:${user.email}:${[...departmentNames].sort().join("|")}`
     : null;
 
-  // Check application count when user is loaded
-  useEffect(() => {
-    if (user) {
-      const userEmail = user.email;
-      checkApplicationCount(userEmail);
-    }
-  }, [user]);
-
-  // Function to check application count
-  async function checkApplicationCount(userEmail) {
-    const checkResponse = await fetch(
-      `/api/check-applications?email=${userEmail}`
-    );
-    const { count } = await checkResponse.json();
-    console.log(count);
-
-    if (count >= 2) {
-      setErrorMessage(
-        "Remember that you can only submit upto 2 unique applications"
-      );
-      setIsSubmitting(false);
-      return;
-    }
-  }
-
-  const normalizeDeptName = (str) => (str ? str.trim().toLowerCase().replace(/\s*\/\s*/g, "/") : "");
-
   const questionData = useMemo(
     () => [...new Set(departmentNames.flatMap((department) =>
-      (QuestionnaireData.find((item) => normalizeDeptName(item.department) === normalizeDeptName(department))?.questions ?? [])
-        .map(normaliseQuestion)
-        .map((question) => question.name)
+      questionsForDepartment(department).map((question) => question.name)
     ))],
     [departmentNames]
   );
@@ -173,15 +168,11 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
         setErrorMessage(`You have already submitted an application for ${departmentNames.join(" and ")}.`);
       }
       localStorage.setItem(draftKey, JSON.stringify({ values: form.getValues(), submittedDepartments: completed }));
-      setLoading(false);
       setIsDraftReady(true);
     }
 
     initialiseForm().catch(() => {
-      if (isActive) {
-        setLoading(false);
-        setIsDraftReady(true);
-      }
+      if (isActive) setIsDraftReady(true);
     });
 
     return () => { isActive = false; };
@@ -197,10 +188,10 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
   // Check if user is authenticated
   if (!isLoaded) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
-          <span className="mx-auto mb-4 block h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-          <p className="text-white">Loading...</p>
+          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -208,24 +199,19 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
 
   if (!isSignedIn) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh] m-10">
-        <div className="text-center">
-          <p className="text-2xl font-semibold text-white mb-4">
-            Sign In Required
-          </p>
-          <p className="text-lg text-gray-300 mb-6">
+      <div className="flex min-h-[60vh] items-center justify-center p-6">
+        <div className="surface max-w-sm p-8 text-center">
+          <p className="text-xl font-semibold text-foreground">Sign In Required</p>
+          <p className="mt-2 text-sm text-muted-foreground">
             Please sign in to access the application form.
           </p>
-          <Button onClick={() => router.push("/auth/signin")} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => router.push("/auth/signin")} className="btn-primary mt-6 w-full">
             Sign In
           </Button>
         </div>
       </div>
     );
   }
-
-  // User is authenticated
-  const userEmail = user?.email;
 
   const handleSubmit = async (values) => {
     setIsSubmitting(true);
@@ -250,8 +236,7 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
     };
 
     const submitDepartment = async (department) => {
-      const questions = (QuestionnaireData.find((item) => item.department === department)?.questions ?? [])
-        .map(normaliseQuestion);
+      const questions = questionsForDepartment(department);
 
       const response = await fetch("/api/submit-form", {
         method: "POST",
@@ -281,15 +266,19 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
 
       setSubmittedDepartments(completed);
       markDepartmentsSubmitted(completed);
-      if (draftKey) localStorage.setItem(draftKey, JSON.stringify({ values, submittedDepartments: completed }));
       if (typeof window !== "undefined" && values?.Email) {
         sessionStorage.setItem(`submitted_depts_${values.Email}`, JSON.stringify(completed));
       }
       successful.forEach((department) => toast.success(`Application submitted for ${department}.`));
 
       if (failed.length) {
+        // Keep the draft around so the applicant can retry the departments that failed.
+        if (draftKey) localStorage.setItem(draftKey, JSON.stringify({ values, submittedDepartments: completed }));
         setErrorMessage(`Submitted ${successful.length ? successful.join(", ") : "no applications"}. Please retry ${failed.join(", ")}.`);
       } else {
+        // Everything succeeded — the draft would otherwise sit in localStorage readable by
+        // the next person on a shared machine.
+        if (draftKey) localStorage.removeItem(draftKey);
         router.push("/departments");
       }
     } catch {
@@ -299,55 +288,55 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
     }
   };
 
-  if (loading) {
-    return (
-      <div>
-        <p>Checking your application status...</p>
-      </div>
-    );
-  }
-
-  if (!isFormOpen) {
-    return (
-      <div>
-        <p>Recruitment Closed</p>
-        <p>Recruitment has now been terminated.</p>
-      </div>
-    );
-  }
-
   return (
-    <main>
+    <main className="container-page py-10">
       {errorMessage && !isSubmitting && (
-        <div>
-          <p style={{ color: "red" }}>{errorMessage}</p>
-          <button type="button" onClick={() => router.push("/departments")}>
-            Go Back
-          </button>
+        <div className="surface mb-6 flex items-start gap-3 border-destructive/40 bg-destructive/10 p-4">
+          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-destructive">{errorMessage}</p>
+            <button
+              type="button"
+              onClick={() => router.push("/departments")}
+              className="btn-ghost mt-2 h-8 px-3 text-xs"
+            >
+              Go Back
+            </button>
+          </div>
         </div>
       )}
 
-      <h1>Application Form</h1>
-      <p>
-        Applying to: <strong>{departmentNames.join(", ")}</strong>
-      </p>
-
-      <hr />
+      <h1 className="text-3xl font-bold text-foreground">Application Form</h1>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {departmentObjects.map((department, index) => {
+          const name = typeof department === "string" ? department : department.name;
+          const tone = typeof department === "string" ? undefined : department.tone;
+          return (
+            <span
+              key={name || index}
+              className="badge"
+              style={tone ? { backgroundColor: `${tone}22`, color: tone, borderColor: `${tone}55` } : undefined}
+            >
+              {name}
+            </span>
+          );
+        })}
+      </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <section>
-            <h2>About You</h2>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="mt-8 space-y-8">
+          <section className="surface p-6">
+            <h2 className="text-lg font-semibold text-foreground">About You</h2>
 
-            <div>
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="Name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel className="label">Full Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Jane Doe" />
+                      <Input {...field} className="field" placeholder="Jane Doe" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -359,9 +348,14 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
                 name="RegistrationNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Registration Number</FormLabel>
+                    <FormLabel className="label">Registration Number</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="e.g. 25BCE5612" />
+                      <Input
+                        {...field}
+                        className="field"
+                        placeholder="e.g. 25BCE5612"
+                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -373,17 +367,20 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
                 name="Gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Gender</FormLabel>
+                    <FormLabel className="label">Gender</FormLabel>
                     <FormControl>
-                      <select {...field} value={field.value || ""}>
-                        <option value="" disabled>
-                          Select Gender
-                        </option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                        <option value="Prefer not to say">Prefer not to say</option>
-                      </select>
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger className="field">
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {GENDER_OPTIONS.map((option) => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -395,9 +392,20 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
                 name="Year of Study"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Year of Study</FormLabel>
+                    <FormLabel className="label">Year of Study</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="e.g. 1st Year / 2nd Year" />
+                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                        <SelectTrigger className="field">
+                          <SelectValue placeholder="Select year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {YEAR_OPTIONS.map((option) => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -409,9 +417,9 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
                 name="Email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel className="label">Email Address</FormLabel>
                     <FormControl>
-                      <Input {...field} readOnly type="email" />
+                      <Input {...field} className="field" readOnly type="email" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -423,9 +431,9 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
                 name="Phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone (WhatsApp)</FormLabel>
+                    <FormLabel className="label">Phone (WhatsApp)</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="+919876543210" />
+                      <Input {...field} className="field" placeholder="+919876543210" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -433,15 +441,15 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
               />
             </div>
 
-            <div>
+            <div className="mt-4">
               <FormField
                 control={form.control}
-                name="Why do you want to join Organization Name?"
+                name={GENERAL_QUESTION_NAME}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Why do you want to join Organization Name?</FormLabel>
+                    <FormLabel className="label">{GENERAL_QUESTION_NAME}</FormLabel>
                     <FormControl>
-                      <Textarea {...field} rows={4} placeholder="2-3 Sentences" />
+                      <Textarea {...field} className="field h-auto" rows={4} placeholder="2-3 Sentences" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -450,13 +458,12 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
             </div>
           </section>
 
-          <hr />
+          {departmentObjects[0] && renderDepartmentQuestions(departmentObjects[0], form)}
+          {departmentObjects[1] && renderDepartmentQuestions(departmentObjects[1], form)}
 
-          {renderDepartmentQuestions(departmentNames[0], QuestionnaireData, form)}
-          {departmentNames[1] && renderDepartmentQuestions(departmentNames[1], QuestionnaireData, form)}
-
-          <div style={{ marginTop: "20px" }}>
-            <button type="submit" disabled={isSubmitting}>
+          <div className="flex justify-end">
+            <button type="submit" disabled={isSubmitting} className="btn-primary px-8 py-3 text-base">
+              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
               {isSubmitting ? "Submitting..." : "Submit Application"}
             </button>
           </div>
@@ -466,39 +473,41 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
   );
 };
 
-const renderDepartmentQuestions = (department, QuestionnaireData, form) => {
-  const questions = (
-    QuestionnaireData.find(qd => qd.department === department)?.questions ?? []
-  )
-    .map(normaliseQuestion)
-    .filter((question) => question.name !== "Why do you want to join Organization Name?" && question.name !== "Why do you want to join DWASFW?");
+const renderDepartmentQuestions = (department, form) => {
+  const name = typeof department === "string" ? department : department.name;
+  const tone = typeof department === "string" ? undefined : department.tone;
+
+  const questions = questionsForDepartment(name).filter(
+    (question) => question.name !== GENERAL_QUESTION_NAME
+  );
 
   if (!questions.length) return null;
 
   return (
-    <section style={{ marginTop: "20px" }}>
-      <h2>{department} Questions</h2>
-      <div>
-        {questions.map((question) => {
-          const isCompact = question.type === "short-text";
+    <section key={name} className="surface overflow-hidden">
+      <div className="h-1 w-full" style={{ backgroundColor: tone || "hsl(var(--primary))" }} />
+      <div className="p-6">
+        <h2 className="text-lg font-semibold text-foreground">{name} Questions</h2>
 
-          return (
-            <div key={question.name} style={{ marginBottom: "16px" }}>
+        <div className="mt-4 space-y-4">
+          {questions.map((question) => {
+            const isCompact = question.type === "short-text";
+
+            return (
               <FormField
+                key={question.name}
                 control={form.control}
                 name={question.name}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{question.name}</FormLabel>
+                    <FormLabel className="label">{question.name}</FormLabel>
                     <FormControl>
                       {isCompact ? (
-                        <Input
-                          {...field}
-                          placeholder={question.placeholder || "Answer..."}
-                        />
+                        <Input {...field} className="field" placeholder={question.placeholder || "Answer..."} />
                       ) : (
                         <Textarea
                           {...field}
+                          className="field h-auto"
                           rows={4}
                           placeholder={question.placeholder || "2-3 sentences"}
                         />
@@ -508,9 +517,9 @@ const renderDepartmentQuestions = (department, QuestionnaireData, form) => {
                   </FormItem>
                 )}
               />
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </section>
   );

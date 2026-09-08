@@ -12,9 +12,13 @@ function AccessDenied() {
   return (
     <main>
       <NavBar />
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <h1 className="text-2xl font-bold">Access Denied</h1>
-        <p>You are not authorized to view this webpage.</p>
+      <div className="container-page flex min-h-[60vh] items-center justify-center">
+        <div className="surface max-w-sm p-8 text-center">
+          <h1 className="text-xl font-semibold text-foreground">Access Denied</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            You are not authorized to view this webpage.
+          </p>
+        </div>
       </div>
     </main>
   );
