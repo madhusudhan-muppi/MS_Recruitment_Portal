@@ -35,7 +35,13 @@ import {
 import { CiWarning } from "react-icons/ci";
 import { Input } from "./ui/input";
 
-export default function MailComposer({ recipients, handleRowSelection }) {
+export default function MailComposer({
+    recipients,
+    handleRowSelection,
+    open,
+    onOpenChange,
+    hideTrigger = false,
+}) {
     const [payloadData, setPayloadData] = useState({
         subject: "",
         body: "",
@@ -85,11 +91,17 @@ export default function MailComposer({ recipients, handleRowSelection }) {
         },
     });
 
+    // Controlled when `open` is supplied (per-row actions drive it), otherwise
+    // it manages itself from its own trigger.
+    const controlledProps = open === undefined ? {} : { open, onOpenChange };
+
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button variant="outline">Custom Mail</Button>
-            </DialogTrigger>
+        <Dialog {...controlledProps}>
+            {!hideTrigger && (
+                <DialogTrigger asChild>
+                    <Button variant="outline">Custom Mail</Button>
+                </DialogTrigger>
+            )}
             <DialogContent
                 className="max-w-[95vw] sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[75vw] overflow-x-hidden"
             >

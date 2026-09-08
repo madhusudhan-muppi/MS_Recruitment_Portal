@@ -32,10 +32,32 @@ const GENERAL_QUESTION_NAME = `Why do you want to join ${ORG_NAME}?`;
 const GENDER_OPTIONS = ["Male", "Female", "Other", "Prefer not to say"];
 const YEAR_OPTIONS = ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year"];
 
-const normaliseQuestion = (question) =>
-  typeof question === "string"
-    ? { name: question, type: "generic", placeholder: "2-3 sentences" }
-    : question;
+// react-hook-form parses field names as lodash-style paths, so a question
+// ending in "." (or containing "[" / "]") registers as a NESTED field and the
+// flat lookup `values[question.name]` comes back undefined — the answer is
+// silently submitted as "". Register every question under a safe, stable id
+// instead, and map back to the human-readable text only when submitting.
+const fieldIdForQuestion = (name) => {
+  let hash = 2166136261;
+  for (let i = 0; i < name.length; i += 1) {
+    hash ^= name.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 40);
+  return `q_${slug}_${(hash >>> 0).toString(36)}`;
+};
+
+const normaliseQuestion = (question) => {
+  const base =
+    typeof question === "string"
+      ? { name: question, type: "generic", placeholder: "2-3 sentences" }
+      : question;
+  return { ...base, fieldId: fieldIdForQuestion(base.name) };
+};
 
 const normalizeDeptName = (str) =>
   str ? str.trim().toLowerCase().replace(/\s*\/\s*/g, "/") : "";
@@ -48,6 +70,10 @@ const questionsForDepartment = (department) =>
       (item) => normalizeDeptName(item.department) === normalizeDeptName(department)
     )?.questions ?? []
   ).map(normaliseQuestion);
+
+// The "why do you want to join" question is asked once and stored on every
+// department's submission.
+const GENERAL_QUESTION_FIELD_ID = fieldIdForQuestion(GENERAL_QUESTION_NAME);
 
 const FormComp = ({ dept1, dept2 }) => {
   // Use Better Auth's useSession hook directly
@@ -77,12 +103,16 @@ const FormComp = ({ dept1, dept2 }) => {
     ? `recruitment-draft:${user.email}:${[...departmentNames].sort().join("|")}`
     : null;
 
-  const questionData = useMemo(
-    () => [...new Set(departmentNames.flatMap((department) =>
-      questionsForDepartment(department).map((question) => question.name)
-    ))],
-    [departmentNames]
-  );
+  // Unique by field id, so a question shared by both departments is asked once.
+  const questionData = useMemo(() => {
+    const byFieldId = new Map();
+    departmentNames.forEach((department) => {
+      questionsForDepartment(department).forEach((question) => {
+        if (!byFieldId.has(question.fieldId)) byFieldId.set(question.fieldId, question);
+      });
+    });
+    return [...byFieldId.values()];
+  }, [departmentNames]);
 
   const schemaObj = {
     Name: z.string().min(1, "Name is required"),
@@ -102,8 +132,9 @@ const FormComp = ({ dept1, dept2 }) => {
     "Year of Study": z.string().optional(),
   };
 
-  questionData.forEach((qd) => {
-    schemaObj[qd] = z.string().optional();
+  schemaObj[GENERAL_QUESTION_FIELD_ID] = z.string().optional();
+  questionData.forEach((question) => {
+    schemaObj[question.fieldId] = z.string().optional();
   });
 
   const formSchema = z.object(schemaObj);
@@ -238,13 +269,23 @@ const FormComp = ({ dept1, dept2 }) => {
     const submitDepartment = async (department) => {
       const questions = questionsForDepartment(department);
 
+      // Keys stay the human-readable question text (that is what the admin
+      // view and the CSV export read); values are looked up by safe field id.
+      const Questions = questions.reduce(
+        (answers, question) => ({
+          ...answers,
+          [question.name]: values[question.fieldId] || "",
+        }),
+        { [GENERAL_QUESTION_NAME]: values[GENERAL_QUESTION_FIELD_ID] || "" }
+      );
+
       const response = await fetch("/api/submit-form", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...basicDetails,
           Department: department,
-          Questions: questions.reduce((answers, question) => ({ ...answers, [question.name]: values[question.name] || "" }), {}),
+          Questions,
         }),
       });
       if (!response.ok) {
@@ -530,7 +571,7 @@ const FormComp = ({ dept1, dept2 }) => {
                 <div className="mt-6">
                   <FormField
                     control={form.control}
-                    name={GENERAL_QUESTION_NAME}
+                    name={GENERAL_QUESTION_FIELD_ID}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="label">{GENERAL_QUESTION_NAME}</FormLabel>
@@ -713,9 +754,9 @@ const renderDepartmentQuestions = (department, form, stepNumber) => {
 
           return (
             <FormField
-              key={question.name}
+              key={question.fieldId}
               control={form.control}
-              name={question.name}
+              name={question.fieldId}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="label">{question.name}</FormLabel>

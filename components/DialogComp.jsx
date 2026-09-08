@@ -18,7 +18,12 @@ import { CiWarning } from "react-icons/ci";
 import CarouselComp from "./CarouselComp";
 import { toast } from "sonner";
 
-export default function DialogComp({ selectedApplicants }) {
+export default function DialogComp({
+    selectedApplicants,
+    open,
+    onOpenChange,
+    hideTrigger = false,
+}) {
     const [shortlistStatus, setShortlistStatus] = useState([]);
 
     // Initialize the shortlist status when the component loads
@@ -53,11 +58,17 @@ export default function DialogComp({ selectedApplicants }) {
         }
     };
 
+    // Controlled when `open` is supplied (per-row actions drive it), otherwise
+    // it manages itself from its own trigger.
+    const controlledProps = open === undefined ? {} : { open, onOpenChange };
+
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button variant="outline">View Responses</Button>
-            </DialogTrigger>
+        <Dialog {...controlledProps}>
+            {!hideTrigger && (
+                <DialogTrigger asChild>
+                    <Button variant="outline">View Responses</Button>
+                </DialogTrigger>
+            )}
             <DialogContent className="max-w-[95vw] sm:max-w-[80vw] md:max-w-[70vw] lg:max-w-[60vw] h-fit">
                 <DialogHeader>
                     <DialogTitle>Applicant&apos;s Responses</DialogTitle>

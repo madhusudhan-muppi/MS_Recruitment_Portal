@@ -11,6 +11,17 @@ import GDGLoader from "@/components/GDGLoader";
 
 const MIN_PASSWORD_LENGTH = 8;
 
+// Better Auth returns an empty `message` when the server route itself failed
+// (a 500), which makes "Failed to create account." look like a validation
+// problem rather than a server misconfiguration. Say which one it is.
+const describeAuthError = (error, fallback) => {
+  if (error?.message) return error.message;
+  if (error?.status >= 500) {
+    return "The server rejected the request. Check the dev server logs — the auth service may be misconfigured.";
+  }
+  return fallback;
+};
+
 const GoogleLogo = (props) => (
   <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true" {...props}>
     <path
@@ -102,7 +113,11 @@ export default function SignInPage() {
       if (mode === "signup") {
         const res = await authClient.signUp.email({ email, password, name, callbackURL: "/" });
         if (res?.error) {
-          toast.error(res.error.message || "Failed to create account.");
+          // Log the whole error — a 500 from the auth route arrives with an
+          // empty `message`, which otherwise hides the real cause behind the
+          // generic toast below.
+          console.error("Sign-up failed:", res.error);
+          toast.error(describeAuthError(res.error, "Failed to create account."));
         } else {
           toast.success("Account created successfully!");
           router.push("/");
@@ -110,7 +125,8 @@ export default function SignInPage() {
       } else {
         const res = await authClient.signIn.email({ email, password, callbackURL: "/" });
         if (res?.error) {
-          toast.error(res.error.message || "Invalid credentials.");
+          console.error("Sign-in failed:", res.error);
+          toast.error(describeAuthError(res.error, "Invalid credentials."));
         } else {
           toast.success("Signed in successfully!");
           router.push("/");

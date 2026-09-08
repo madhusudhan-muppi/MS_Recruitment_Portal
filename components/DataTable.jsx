@@ -12,7 +12,7 @@ import FilterDepartment from "./FilterDepartment";
 import FilterShortlisted from "./FilterShortlisted";
 import { FaSortAmountDownAlt } from "react-icons/fa";
 import { GrPowerReset } from "react-icons/gr";
-import { Search } from "lucide-react";
+import { Mail, ScrollText, Search } from "lucide-react";
 import { Button } from "./ui/button";
 import { CheckBoxComp } from "./CheckBoxComp";
 import { toast } from "sonner";
@@ -36,6 +36,8 @@ const DataTable = ({ data }) => {
   const [rows, setRows] = useState(data);
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [shortlistedFilter, setShortlistedFilter] = useState("");
+  // Which dialog the toolbar / per-row actions have opened: "responses" | "mail" | null
+  const [openDialog, setOpenDialog] = useState(null);
 
   const tableData = useMemo(
     () =>
@@ -124,7 +126,10 @@ const DataTable = ({ data }) => {
           return (
             <button
               type="button"
-              onClick={() => handleShortlist(row.original._id, isShortlisted)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShortlist(row.original._id, isShortlisted);
+              }}
               className="inline-flex w-[118px] items-center justify-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-opacity hover:opacity-80"
               style={{
                 backgroundColor: `${isShortlisted ? "rgb(52 168 83" : "rgb(66 133 244"} / 0.12)`,
@@ -159,6 +164,7 @@ const DataTable = ({ data }) => {
     setPageSize,
     setGlobalFilter,
     selectedFlatRows,
+    toggleAllRowsSelected,
   } = useTable(
     {
       columns,
@@ -176,19 +182,63 @@ const DataTable = ({ data }) => {
             id: "selection",
             disableSortBy: true,
             Header: ({ getToggleAllRowsSelectedProps }) => (
-              <CheckBoxComp {...getToggleAllRowsSelectedProps()} />
+              // Stop the click bubbling to the row handler, which would
+              // immediately toggle the selection back again.
+              <span onClick={(e) => e.stopPropagation()} className="flex">
+                <CheckBoxComp {...getToggleAllRowsSelectedProps()} />
+              </span>
             ),
             Cell: ({ row }) => (
-              <CheckBoxComp {...row.getToggleRowSelectedProps()} />
+              <span onClick={(e) => e.stopPropagation()} className="flex">
+                <CheckBoxComp {...row.getToggleRowSelectedProps()} />
+              </span>
             ),
           },
           ...columns,
+          {
+            id: "actions",
+            disableSortBy: true,
+            Header: "Actions",
+            Cell: ({ row }) => (
+              <div
+                className="flex items-center gap-1"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  title={`View ${row.original.Name || "applicant"}'s responses`}
+                  aria-label="View responses"
+                  onClick={() => openForRow(row, "responses")}
+                  className="btn-ghost h-8 w-8 p-0"
+                >
+                  <ScrollText className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  title={`Send mail to ${row.original.Name || "applicant"}`}
+                  aria-label="Send custom mail"
+                  onClick={() => openForRow(row, "mail")}
+                  className="btn-ghost h-8 w-8 p-0"
+                >
+                  <Mail className="h-4 w-4" />
+                </button>
+              </div>
+            ),
+          },
         ];
       });
     }
   );
 
   const { globalFilter, pageIndex } = state;
+
+  // Per-row action: narrow the selection to just that person, then open the
+  // dialog so it shows them alone.
+  const openForRow = (row, dialog) => {
+    toggleAllRowsSelected(false);
+    row.toggleRowSelected(true);
+    setOpenDialog(dialog);
+  };
 
   const [pageSizeInputKey, setPageSizeInputKey] = useState(0);
 
@@ -237,10 +287,12 @@ const DataTable = ({ data }) => {
     }
   };
 
-  const showRowData = () => {
-    const selectedApplicants = selectedFlatRows.map((row) => row.original);
-    return selectedApplicants;
-  };
+  // Stable identity so DialogComp's effect doesn't re-run on every render of
+  // this table.
+  const showRowData = useCallback(
+    () => selectedFlatRows.map((row) => row.original),
+    [selectedFlatRows]
+  );
 
   const formatQuestionsForCsv = (item) => {
     if (!item?.Questions) return "";
@@ -304,8 +356,22 @@ const DataTable = ({ data }) => {
         />
         <FilterDepartment value={departmentFilter} onChange={setDepartmentFilter} />
         <FilterShortlisted value={shortlistedFilter} onChange={setShortlistedFilter} />
-        <DialogComp selectedApplicants={showRowData} />
-        <MailComposer recipients={selectedFlatRows.length} handleRowSelection={handleRowSelection} />
+        <Button
+          variant="outline"
+          className="btn-secondary gap-2"
+          onClick={() => setOpenDialog("responses")}
+        >
+          <ScrollText className="h-4 w-4" />
+          View Responses
+        </Button>
+        <Button
+          variant="outline"
+          className="btn-secondary gap-2"
+          onClick={() => setOpenDialog("mail")}
+        >
+          <Mail className="h-4 w-4" />
+          Custom Mail
+        </Button>
         <Button onClick={handleResetFilters} variant="outline" className="btn-secondary gap-2">
           <GrPowerReset />
           Reset Filters
@@ -374,7 +440,13 @@ const DataTable = ({ data }) => {
                 prepareRow(row);
                 const { key: rowKey, ...rowProps } = row.getRowProps();
                 return (
-                  <TableRow key={rowKey} {...rowProps}>
+                  <TableRow
+                    key={rowKey}
+                    {...rowProps}
+                    onClick={() => row.toggleRowSelected()}
+                    aria-selected={row.isSelected}
+                    className={`cursor-pointer ${row.isSelected ? "bg-accent/60" : ""}`}
+                  >
                     {row.cells.map((cell) => {
                       const { key: cellKey, ...cellProps } = cell.getCellProps();
                       return (
@@ -400,6 +472,22 @@ const DataTable = ({ data }) => {
         canPrev={canPreviousPage}
         goto={gotoPage}
         pageCount={pageCount}
+      />
+
+      {/* One instance of each dialog, driven by the toolbar and the per-row
+          action buttons alike. */}
+      <DialogComp
+        selectedApplicants={showRowData}
+        hideTrigger
+        open={openDialog === "responses"}
+        onOpenChange={(isOpen) => setOpenDialog(isOpen ? "responses" : null)}
+      />
+      <MailComposer
+        recipients={selectedFlatRows.length}
+        handleRowSelection={handleRowSelection}
+        hideTrigger
+        open={openDialog === "mail"}
+        onOpenChange={(isOpen) => setOpenDialog(isOpen ? "mail" : null)}
       />
     </div>
   );
