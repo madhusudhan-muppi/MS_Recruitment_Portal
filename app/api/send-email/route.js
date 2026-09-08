@@ -1,6 +1,7 @@
 require("dotenv").config();
 import nodemailer from "nodemailer";
 import { reviews } from "@/constants";
+import { requireAdmin } from "@/lib/auth-guards";
 
 const transporter = nodemailer.createTransport({
     service: "gmail", // or your preferred email service
@@ -11,6 +12,9 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function POST(req) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     const { recipients, payloadData } = await req.json();
 
     if (!recipients || recipients.length === 0) {

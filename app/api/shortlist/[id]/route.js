@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { connect, serializeFirestoreData } from '@/lib/db';
+import { requireAdmin } from '@/lib/auth-guards';
 
 export async function PATCH(req, { params }) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     const db = await connect();
 
     const { id } = params;

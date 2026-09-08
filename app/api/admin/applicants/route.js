@@ -1,10 +1,14 @@
 import { connect, serializeFirestoreData } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth-guards";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     const db = await connect();
     const snapshot = await db.collection("formData").get();
     const applicants = snapshot.docs.map((doc) => ({
