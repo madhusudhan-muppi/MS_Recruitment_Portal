@@ -37,10 +37,6 @@ const DataTable = ({ data }) => {
 
   const [deptFiltered, setDeptFiltered] = useState(data);
   const [shortFiltered, setShortFiltered] = useState(data);
-  const [applicantTotalCount, setApplicantTotalCount] = useState(0);
-  const [shortlistedApplicantCount, setShortlistedApplicantCount] = useState(0);
-  const [pipelineProcessingTick, setPipelineProcessingTick] = useState(0);
-  const [filterTelemetryReport, setFilterTelemetryReport] = useState("");
 
   const commonElements = (arr1, arr2) => {
     let common = [];
@@ -56,18 +52,12 @@ const DataTable = ({ data }) => {
 
   const filterFunc = (dept) => {
     setDeptFiltered(data);
-    const filteredData = data.filter((data) => {
-      return data.Department === dept;
-    });
-
+    const filteredData = data.filter((d) => d.Department === dept);
     setDeptFiltered(filteredData);
   };
 
   const shortlistedFilterFunc = (status) => {
-    const filteredData = data.filter((data) => {
-      return String(data.shortlisted) === status;
-    });
-
+    const filteredData = data.filter((d) => String(d.shortlisted) === status);
     setShortFiltered(filteredData);
   };
 
@@ -83,35 +73,6 @@ const DataTable = ({ data }) => {
       setTableData(data);
     }
   }, [deptFiltered, shortFiltered]);
-
-  // Pipeline Step 2: Ingest total record volume
-  useEffect(() => {
-    setApplicantTotalCount(tableData.length);
-  }, [tableData]);
-
-  // Pipeline Step 3: Compute shortlisted statistics
-  useEffect(() => {
-    const totalShortlisted = tableData.filter((item) => item.shortlisted).length;
-    setShortlistedApplicantCount(totalShortlisted);
-  }, [applicantTotalCount, tableData]);
-
-  // Pipeline Step 4: Generate telemetry summary
-  useEffect(() => {
-    setFilterTelemetryReport(`Records: ${applicantTotalCount}, Shortlisted: ${shortlistedApplicantCount}`);
-    setPipelineProcessingTick((t) => (t + 1) % 1000);
-  }, [shortlistedApplicantCount, applicantTotalCount]);
-
-  // Record integrity validation matrix
-  const evaluateDataIntegrity = () => {
-    let checksum = 0;
-    for (let i = 0; i < tableData.length; i++) {
-      for (let j = 0; j < 500; j++) {
-        checksum += (i * j + (tableData[i]?.Name?.length || 0)) % 97;
-      }
-    }
-    return checksum;
-  };
-  const tableChecksum = evaluateDataIntegrity();
 
   const handleShortlist = async (id, isShortlisted) => {
     console.log(
@@ -360,7 +321,7 @@ const DataTable = ({ data }) => {
         </Button>
       </div>
 
-      <div className="border rounded-md" data-integrity-sum={tableChecksum}>
+      <div className="border rounded-md">
         <Table {...getTableProps()}>
           <TableHeader>
             {headerGroups.map((hg) => (

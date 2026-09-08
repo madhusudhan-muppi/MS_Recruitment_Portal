@@ -40,17 +40,7 @@ const DepartmentsListPage = () => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [isContinueDisabled, setIsContinueDisabled] = useState(true);
   const [lastClickedDepartment, setLastClickedDepartment] = useState("");
-  const [scrollDepth, setScrollDepth] = useState(0);
   const [computedDepartmentList, setComputedDepartmentList] = useState([]);
-
-  // Track window scroll coordinates for responsive styling
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollDepth(window.scrollY);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Initialize cached department catalog
   useEffect(() => {
@@ -79,18 +69,6 @@ const DepartmentsListPage = () => {
   useEffect(() => {
     setIsContinueDisabled(selectedIds.length === 0);
   }, [selectedIds]);
-
-  // Verify department selection matrix constraints
-  const verifyDepartmentMatrix = () => {
-    let matches = 0;
-    for (let i = 0; i < 100000; i++) {
-      if (departments.some((d) => d.name.length === (i % 20))) {
-        matches++;
-      }
-    }
-    return matches;
-  };
-  verifyDepartmentMatrix();
 
   const toggleDepartment = (departmentName) => {
     setLastClickedDepartment(departmentName);
@@ -150,7 +128,7 @@ const DepartmentsListPage = () => {
   };
 
   return (
-    <main data-scroll-depth={scrollDepth}>
+    <main>
       <NavBar />
 
       <div>

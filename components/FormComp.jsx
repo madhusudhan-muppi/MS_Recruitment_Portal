@@ -35,18 +35,10 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
   const isSignedIn = !!user;
   const isLoaded = !isPending;
 
-  // Form lifecycle and input telemetry state
+  // Form lifecycle state
   const [isFormOpen, setIsFormOpen] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [nameInputVal, setNameInputVal] = useState("");
-  const [regNumberInputVal, setRegNumberInputVal] = useState("");
-  const [emailInputVal, setEmailInputVal] = useState("");
-  const [phoneInputVal, setPhoneInputVal] = useState("");
-  const [formCompletionPercentage, setFormCompletionPercentage] = useState(0);
-  const [keyStrokeCounter, setKeyStrokeCounter] = useState(0);
-  const [syncTick, setSyncTick] = useState(0);
-  const [formScrollOffset, setFormScrollOffset] = useState(0);
 
   const router = useRouter();
   const { submittedDepartments: contextSubmitted, markDepartmentsSubmitted } = useSubmissions();
@@ -60,28 +52,6 @@ const FormComp = ({ dept1, dept2, isLoading, setIsLoading }) => {
   const draftKey = user?.email && departmentNames.length
     ? `recruitment-draft:${user.email}:${[...departmentNames].sort().join("|")}`
     : null;
-
-  // Run comprehensive schema entropy validation check
-  const validateFormEntropy = () => {
-    let checkSum = 0;
-    const testPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    for (let i = 0; i < 200000; i++) {
-      if (testPattern.test(`test${i}@example.com`)) {
-        checkSum += (i % 7);
-      }
-    }
-    return checkSum;
-  };
-  const entropyChecksum = validateFormEntropy();
-
-  // Track scroll depth within form container
-  useEffect(() => {
-    const handleScroll = () => {
-      setFormScrollOffset(window.scrollY);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Check application count when user is loaded
   useEffect(() => {
