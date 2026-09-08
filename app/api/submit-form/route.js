@@ -1,6 +1,7 @@
 import { connect } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { MAX_APPLICATIONS } from "@/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,43 @@ export async function POST(req) {
     const db = await connect();
     const data = await req.json();
 
-    const { Department, Questions, ...formFields } = data;
+    const { Department, Questions } = data;
+
+    // Only these fields may come from the client. Previously the handler
+    // spread `...formFields` — every remaining key in the request body —
+    // straight into the document, so an applicant could POST
+    // {"shortlisted": true} and shortlist themselves, or write arbitrary
+    // junk into the collection. Email/createdAt were already assigned after
+    // the spread, but `shortlisted` was not.
+    const ALLOWED_FIELDS = [
+      "Name",
+      "RegistrationNumber",
+      "Gender",
+      "Phone",
+      "Year of Study",
+    ];
+    const MAX_FIELD_LENGTH = 200;
+
+    const formFields = {};
+    for (const key of ALLOWED_FIELDS) {
+      const value = data[key];
+      if (value === undefined || value === null) continue;
+      if (typeof value !== "string") {
+        return new Response(
+          JSON.stringify({ message: `${key} must be a string` }),
+          { status: 400 }
+        );
+      }
+      if (value.length > MAX_FIELD_LENGTH) {
+        return new Response(
+          JSON.stringify({
+            message: `${key} cannot exceed ${MAX_FIELD_LENGTH} characters`,
+          }),
+          { status: 400 }
+        );
+      }
+      formFields[key] = value;
+    }
 
     if (!Department || typeof Department !== "string" || !Department.trim()) {
       return new Response(
@@ -114,11 +151,11 @@ export async function POST(req) {
         };
       }
 
-      if (existingSubmissions.size >= 2) {
+      if (existingSubmissions.size >= MAX_APPLICATIONS) {
         return {
           errorResponse: new Response(
             JSON.stringify({
-              message: "Remember that you can only submit upto 2 unique applications",
+              message: `Remember that you can only submit up to ${MAX_APPLICATIONS} unique applications`,
             }),
             { status: 400 }
           ),
@@ -131,6 +168,8 @@ export async function POST(req) {
         Department,
         Questions,
         Email: userEmail,
+        // Always server-assigned, never taken from the request body.
+        shortlisted: false,
         createdAt: new Date(),
       });
 
