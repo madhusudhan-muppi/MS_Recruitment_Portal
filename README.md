@@ -7,6 +7,12 @@ reviews, filters, shortlists and emails candidates from an admin panel.
 Next.js 14 (App Router) · Firestore via `firebase-admin` · Better Auth ·
 Tailwind + shadcn/ui · react-hook-form + zod
 
+![The landing page: Google-palette particle field behind the hero, with the signature four-colour rule under the navigation](docs/landing.png)
+
+> The landing background is a `three.js` particle field that parallaxes with the
+> pointer. It is loaded only on this page and only in the browser, so no other
+> route pays for it — see [WORK.md §6](WORK.md#6-user-interface).
+
 ---
 
 ## Documentation
